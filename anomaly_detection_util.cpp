@@ -1,12 +1,16 @@
-//
-// Created by Itay on 10/14/2021.
-//
-#include "cmath"
+/*
+ * animaly_detection_util.cpp
+ *
+ * Author: Itay Etelis - 209041474
+ *         Orel Benshamai - 318869658
+ */
+
+#include <math.h>
 #include "anomaly_detection_util.h"
 
 // returns the variance of X and Y
 float var(float* x, int size) {
-    float m = average(x, size);
+    float m = avg(x, size);
     float sum = 0;
     for(int i = 1; i <= size; i++) {
        sum += (float)pow(*(x + i) - m, 2);
@@ -14,7 +18,7 @@ float var(float* x, int size) {
     return (float)(1.0/size) * sum;
 }
 
-float average(const float *pDouble, int size) {
+float avg(const float *pDouble, int size) {
     float sum = 0;
     for(int i = 1; i <= size; i++) {
         sum += *(pDouble + i);
@@ -27,9 +31,9 @@ float cov(float* x, float* y, int size) {
     for (int i = 0; i < size; i++){
         multiXY[i] = *(x +i) * *(y+i);
     }
-    float eXY = average(multiXY, size);
-    float eX = average(x,size);
-    float eY = average(y,size);
+    float eXY = avg(multiXY, size);
+    float eX = avg(x,size);
+    float eY = avg(y,size);
     return (eXY - (eX*eY));
 }
 
@@ -49,8 +53,18 @@ Line linear_reg(Point** points, int size) {
         temp = temp + i;
     }
     float a = cov(X,Y,size) / var(X, size);
-    float avX = average(X, size);
-    float avY = average(Y, size);
+    float avX = avg(X, size);
+    float avY = avg(Y, size);
     float b = avY - (a * avX);
     return {a, b};
+}
+
+// returns the deviation between point p and the line equation of the points
+float dev(Point p,Point** points, int size){
+    return 0;
+}
+
+// returns the deviation between point p and the line
+float dev(Point p,Line l){
+    return 0;
 }
