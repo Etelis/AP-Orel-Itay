@@ -65,22 +65,9 @@ include CMakeFiles/AP_Orel_Itay.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/AP_Orel_Itay.dir/flags.make
 
-CMakeFiles/AP_Orel_Itay.dir/main.cpp.obj: CMakeFiles/AP_Orel_Itay.dir/flags.make
-CMakeFiles/AP_Orel_Itay.dir/main.cpp.obj: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Itay\Desktop\AP-Orel-Itay\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/AP_Orel_Itay.dir/main.cpp.obj"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\AP_Orel_Itay.dir\main.cpp.obj -c C:\Users\Itay\Desktop\AP-Orel-Itay\main.cpp
-
-CMakeFiles/AP_Orel_Itay.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/AP_Orel_Itay.dir/main.cpp.i"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Itay\Desktop\AP-Orel-Itay\main.cpp > CMakeFiles\AP_Orel_Itay.dir\main.cpp.i
-
-CMakeFiles/AP_Orel_Itay.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/AP_Orel_Itay.dir/main.cpp.s"
-	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Itay\Desktop\AP-Orel-Itay\main.cpp -o CMakeFiles\AP_Orel_Itay.dir\main.cpp.s
-
 CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj: CMakeFiles/AP_Orel_Itay.dir/flags.make
 CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj: ../anomaly_detection_util.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Itay\Desktop\AP-Orel-Itay\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Itay\Desktop\AP-Orel-Itay\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj"
 	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\AP_Orel_Itay.dir\anomaly_detection_util.cpp.obj -c C:\Users\Itay\Desktop\AP-Orel-Itay\anomaly_detection_util.cpp
 
 CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.i: cmake_force
@@ -91,16 +78,29 @@ CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.s"
 	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Itay\Desktop\AP-Orel-Itay\anomaly_detection_util.cpp -o CMakeFiles\AP_Orel_Itay.dir\anomaly_detection_util.cpp.s
 
+CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj: CMakeFiles/AP_Orel_Itay.dir/flags.make
+CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj: ../MainTrain.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\Itay\Desktop\AP-Orel-Itay\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj"
+	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles\AP_Orel_Itay.dir\MainTrain.cpp.obj -c C:\Users\Itay\Desktop\AP-Orel-Itay\MainTrain.cpp
+
+CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.i"
+	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Itay\Desktop\AP-Orel-Itay\MainTrain.cpp > CMakeFiles\AP_Orel_Itay.dir\MainTrain.cpp.i
+
+CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.s"
+	C:\MinGW\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Itay\Desktop\AP-Orel-Itay\MainTrain.cpp -o CMakeFiles\AP_Orel_Itay.dir\MainTrain.cpp.s
+
 # Object files for target AP_Orel_Itay
 AP_Orel_Itay_OBJECTS = \
-"CMakeFiles/AP_Orel_Itay.dir/main.cpp.obj" \
-"CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj"
+"CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj" \
+"CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj"
 
 # External object files for target AP_Orel_Itay
 AP_Orel_Itay_EXTERNAL_OBJECTS =
 
-AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/main.cpp.obj
 AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj
+AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj
 AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/build.make
 AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/linklibs.rsp
 AP_Orel_Itay.exe: CMakeFiles/AP_Orel_Itay.dir/objects1.rsp

@@ -3,4 +3,4 @@ project(AP_Orel_Itay)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(AP_Orel_Itay anomaly_detection_util.h anomaly_detection_util.cpp)
+add_executable(AP_Orel_Itay anomaly_detection_util.h anomaly_detection_util.cpp MainTrain.cpp)

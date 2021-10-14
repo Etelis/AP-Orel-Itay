@@ -6,7 +6,11 @@
 
 #IncludeRegexTransform: 
 
-C:/Users/Itay/Desktop/AP-Orel-Itay/main.cpp
-iostream
+C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.cpp
+math.h
 -
+anomaly_detection_util.h
+C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.h
+
+C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.h
 
