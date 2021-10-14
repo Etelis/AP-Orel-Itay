@@ -82,6 +82,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.cpp">
+			<Option target="AP_Orel_Itay"/>
+		</Unit>
+		<Unit filename="C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.h">
+			<Option target="AP_Orel_Itay"/>
+		</Unit>
 		<Unit filename="C:/Users/Itay/Desktop/AP-Orel-Itay/main.cpp">
 			<Option target="AP_Orel_Itay"/>
 		</Unit>

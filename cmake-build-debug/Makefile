@@ -128,6 +128,30 @@ AP_Orel_Itay/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\AP_Orel_Itay.dir\build.make CMakeFiles/AP_Orel_Itay.dir/build
 .PHONY : AP_Orel_Itay/fast
 
+anomaly_detection_util.obj: anomaly_detection_util.cpp.obj
+.PHONY : anomaly_detection_util.obj
+
+# target to build an object file
+anomaly_detection_util.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\AP_Orel_Itay.dir\build.make CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj
+.PHONY : anomaly_detection_util.cpp.obj
+
+anomaly_detection_util.i: anomaly_detection_util.cpp.i
+.PHONY : anomaly_detection_util.i
+
+# target to preprocess a source file
+anomaly_detection_util.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\AP_Orel_Itay.dir\build.make CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.i
+.PHONY : anomaly_detection_util.cpp.i
+
+anomaly_detection_util.s: anomaly_detection_util.cpp.s
+.PHONY : anomaly_detection_util.s
+
+# target to generate assembly for a file
+anomaly_detection_util.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\AP_Orel_Itay.dir\build.make CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.s
+.PHONY : anomaly_detection_util.cpp.s
+
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
@@ -161,6 +185,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... AP_Orel_Itay
+	@echo ... anomaly_detection_util.obj
+	@echo ... anomaly_detection_util.i
+	@echo ... anomaly_detection_util.s
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
