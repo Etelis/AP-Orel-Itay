@@ -12,7 +12,7 @@
 float var(float* x, int size) {
     float m = avg(x, size);
     float sum = 0;
-    for(int i = 1; i <= size; i++) {
+    for(int i = 0; i < size; i++) {
        sum += (float)pow(*(x + i) - m, 2);
     }
     return (float)(1.0/size) * sum;
@@ -20,10 +20,10 @@ float var(float* x, int size) {
 
 float avg(float* x, int size) {
     float sum = 0;
-    for(int i = 1; i <= size; i++) {
+    for(int i = 0; i < size; i++) {
         sum += *(x + i);
     }
-    return float (1.0/size) * sum;
+    return sum / (float)size;
 }
 
 float cov(float* x, float* y, int size) {
@@ -47,7 +47,7 @@ float pearson(float* x, float* y, int size) {
 Line linear_reg(Point** points, int size) {
     float X[size], Y[size];
     Point* temp = *points;
-    for(int i = 1; i <= size; i++) {
+    for(int i = 0; i < size; i++) {
         X[i] = temp->x;
         Y[i] = temp->y;
         temp = temp + i;
