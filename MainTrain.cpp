@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include "C:\Users\orelb\Desktop\AP-Orel-Itay\anomaly_detection_util.h"
+#include "anomaly_detection_util.h"
 
 using namespace std;
 
