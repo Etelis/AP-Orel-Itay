@@ -18,10 +18,10 @@ float var(float* x, int size) {
     return (float)(1.0/size) * sum;
 }
 
-float avg(const float *pDouble, int size) {
+float avg(float* x, int size) {
     float sum = 0;
     for(int i = 1; i <= size; i++) {
-        sum += *(pDouble + i);
+        sum += *(x + i);
     }
     return float (1.0/size) * sum;
 }
