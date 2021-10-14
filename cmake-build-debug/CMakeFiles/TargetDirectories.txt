@@ -1,3 +1,0 @@
-C:/Users/orelb/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/AP_Orel_Itay.dir
-C:/Users/orelb/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/orelb/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/rebuild_cache.dir
