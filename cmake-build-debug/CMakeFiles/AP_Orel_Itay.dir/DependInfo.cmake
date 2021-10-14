@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/Itay/Desktop/AP-Orel-Itay/MainTrain.cpp" "C:/Users/Itay/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj"
-  "C:/Users/Itay/Desktop/AP-Orel-Itay/anomaly_detection_util.cpp" "C:/Users/Itay/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj"
+  "C:/Users/orelb/Desktop/AP-Orel-Itay/MainTrain.cpp" "C:/Users/orelb/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj"
+  "C:/Users/orelb/Desktop/AP-Orel-Itay/anomaly_detection_util.cpp" "C:/Users/orelb/Desktop/AP-Orel-Itay/cmake-build-debug/CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

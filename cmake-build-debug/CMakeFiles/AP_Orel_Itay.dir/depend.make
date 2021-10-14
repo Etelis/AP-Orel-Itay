@@ -3,7 +3,7 @@
 
 CMakeFiles/AP_Orel_Itay.dir/MainTrain.cpp.obj: \
  ../MainTrain.cpp \
- C:/Users/Itay/Desktop/assignment/anomaly_detection_util.h
+ ../anomaly_detection_util.h
 CMakeFiles/AP_Orel_Itay.dir/anomaly_detection_util.cpp.obj: \
  ../anomaly_detection_util.cpp \
  ../anomaly_detection_util.h
