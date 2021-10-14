@@ -38,3 +38,19 @@ float pearson(float* x, float* y, int size) {
     float c = cov(x, y, size);
     return c / (float)(sqrt(var(x, size)) * sqrt(var(y, size)));
 }
+
+// performs a linear regression and return s the line equation
+Line linear_reg(Point** points, int size) {
+    float X[size], Y[size];
+    Point* temp = *points;
+    for(int i = 1; i <= size; i++) {
+        X[i] = temp->x;
+        Y[i] = temp->y;
+        temp = temp + i;
+    }
+    float a = cov(X,Y,size) / var(X, size);
+    float avX = average(X, size);
+    float avY = average(Y, size);
+    float b = avY - (a * avX);
+    return {a, b};
+}
