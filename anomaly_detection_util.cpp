@@ -10,28 +10,35 @@
 
 // returns the variance of X and Y
 float var(float* x, int size) {
-    float m = avg(x, size);
+    float xAverage = avg(x, size);
     float sum = 0;
     for(int i = 0; i < size; i++) {
-       sum += (float)pow(*(x + i) - m, 2);
+       sum += (float)pow(*x - xAverage, 2);
+       x++;
     }
     return (float)(1.0/size) * sum;
 }
 
-float avg(float* x, int size) {
+float avg(const float* x, int size) {
     float sum = 0;
     for(int i = 0; i < size; i++) {
-        sum += *(x + i);
+        sum += *x;
+        x++;
     }
     return sum / (float)size;
 }
 
-float cov(float* x, float* y, int size) {
+float multiplyAvg(const float* x, const float* y, int size) {
     float multiXY[size];
     for (int i = 0; i < size; i++){
-        multiXY[i] = *(x +i) * *(y+i);
+        multiXY[i] = *x * *y;
+        x++, y++;
     }
-    float eXY = avg(multiXY, size);
+    return avg(multiXY, size);
+}
+
+float cov(float* x, float* y, int size) {
+    float eXY = multiplyAvg(x,y,size);
     float eX = avg(x,size);
     float eY = avg(y,size);
     return (eXY - (eX*eY));
@@ -46,11 +53,10 @@ float pearson(float* x, float* y, int size) {
 // performs a linear regression and return s the line equation
 Line linear_reg(Point** points, int size) {
     float X[size], Y[size];
-    Point* temp = *points;
     for(int i = 0; i < size; i++) {
-        X[i] = temp->x;
-        Y[i] = temp->y;
-        temp = temp + i;
+        X[i] = (*points)->x;
+        Y[i] = (*points)->y;
+        points++;
     }
     float a = cov(X,Y,size) / var(X, size);
     float avX = avg(X, size);
