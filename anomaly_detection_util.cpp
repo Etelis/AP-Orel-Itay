@@ -2,7 +2,7 @@
  * animaly_detection_util.cpp
  *
  * Author: Itay Etelis - 209041474.
- *         Orel Ben shamai - 318869658.
+ *         Orel Ben Shamay - 318869658.
  */
 
 #include <math.h>
