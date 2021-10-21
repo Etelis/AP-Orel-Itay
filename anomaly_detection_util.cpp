@@ -5,6 +5,7 @@
  *         Orel Ben Shamay - 318869658.
  */
 
+#include <stdlib.h>
 #include <math.h>
 #include "anomaly_detection_util.h"
 
