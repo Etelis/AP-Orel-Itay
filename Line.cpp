@@ -1,6 +1,9 @@
-//
-// Created by itay on 16/10/2021.
-//
+/*
+ * animaly_detection_util.cpp
+ *
+ * Author: Itay Etelis - 209041474.
+ *         Orel Ben Shamay - 318869658.
+ */
 
 #include "Line.h"
 Line::Line(): a(0), b(0){}
