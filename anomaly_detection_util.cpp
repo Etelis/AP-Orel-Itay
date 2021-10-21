@@ -51,7 +51,7 @@ float cov(float* x, float* y, int size) {
 
 float pearson(float* x, float* y, int size) {
     float c = cov(x, y, size);
-    return c / ((float)(sqrt(var(x, size)) * (float)sqrt(var(y, size))));
+    return c / ((sqrtf(var(x, size)) * sqrtf(var(y, size))));
 }
 
 Line linear_reg(Point** points, int size) {
