@@ -4,7 +4,7 @@
 #define ANOMALYDETECTORUTIL_H_
 
 // returns the average of a float array.
-float avg(const float* x, int size);
+float avg(float* x, int size);
 
 // returns the variance of X and Y.
 float var(float* x, int size);
@@ -13,7 +13,7 @@ float var(float* x, int size);
 float cov(float* x,  float* y, int size);
 
 // returns the average of both arrays x and y when multiplying each value.
-float multiplyAvg(const float* x, const float* y, int size);
+float multiplyAvg(float* x, float* y, int size);
 
 // returns the Pearson correlation coefficient of X and Y.
 float pearson(float* x, float* y, int size);

@@ -21,7 +21,7 @@ float var(float* x, int size) {
     return ((float)1.0/(float)size) * sum;
 }
 
-float avg(const float* x, int size) {
+float avg(float* x, int size) {
     float sum = 0;
     // compute the sum of the values
     for(int i = 0; i < size; i++) {
@@ -31,7 +31,7 @@ float avg(const float* x, int size) {
     return sum / (float)size;
 }
 
-float multiplyAvg(const float* x, const float* y, int size) {
+float multiplyAvg(float* x,float* y, int size) {
     float multiXY[size];
     // compute the sum of the multiplied values
     for (int i = 0; i < size; i++){
