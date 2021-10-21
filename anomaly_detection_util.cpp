@@ -76,5 +76,5 @@ float dev(Point p,Point** points, int size){
 
 float dev(Point p,Line l){
     float functionOutput = l.f(p.x);
-    return abs(p.y - functionOutput);
+    return fabs(p.y - functionOutput);
 }
