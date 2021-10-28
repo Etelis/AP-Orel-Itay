@@ -36,16 +36,18 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
     auto data = ts.getData();
     map<string, vector<float>>::iterator it1;
     map<string, vector<float>>::iterator it2;
-    size_t size = it1->second.size();
     it1 = data.begin();
+    size_t size = it1->second.size();
     float max, p, *firstVector, *secondVector;
     string firstFeature, secondFeature;
     Point* points[size];
     while(it1 != data.end()) {
         max = 0;
+        p = 0;
         firstFeature = it1->first;
-        secondFeature = nullptr;
-        it2 = it1++;
+        secondFeature = "";
+        it2 = it1;
+        it2++;
         while(it2 != data.end()) {
             firstVector = &it1->second[0];
             secondVector = &it2->second[0];
@@ -59,7 +61,9 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
         if (!secondFeature.empty()) {
             createPoints(points, firstVector, secondVector, size);
             Line reg = linear_reg(points, it1->second.size());
-            correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, size) * 1.1};
+            //TODO free allocated names
+
+            struct correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, size) * (float)1.1};
             freePoints(points, size);
             cf.push_back(c);
         }
@@ -73,16 +77,16 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     string feature1, feature2;
     float *v1, *v2;
     size_t size;
-    Point** points;
+    Point* points[size];
     vector<AnomalyReport> reports;
-    for(auto & i : cf) {
-        feature1 = i.feature1;
-        feature2 = i.feature2;
+    for(int i = 0; i < size; i++) {
+        feature1 = cf[i].feature1;
+        feature2 = cf[i].feature2;
         size = data.find(feature1)->second.size();
         v1 = &data.find(feature1)->second[0];
         v2 = &data.find(feature2)->second[0];
         createPoints(points, v1, v2, size);
-        x(reports, points, i, size);
+        x(reports, points, cf[i] ,size);
         freePoints(points, size);
     }
     return reports;

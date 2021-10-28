@@ -29,8 +29,8 @@ TimeSeries::TimeSeries(const char *CSVFileName):CSVFileName(CSVFileName) {
         it = data.begin();
         stringstream line(info);
         string value;
-        while(getline(ss, value, ',')) {
-            it->second.push_back(stof(info));
+        while(getline(line, value, ',')) {
+            it->second.push_back(stof(value));
             it++;
         }
     }
