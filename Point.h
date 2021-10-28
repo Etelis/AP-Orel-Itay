@@ -9,5 +9,5 @@
 class Point{
 public:
     float x,y;
-    Point(float x, float y);
+    Point(float x = 0, float y = 0);
 };
