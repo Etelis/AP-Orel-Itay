@@ -21,10 +21,11 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
     auto data = ts.getData();
     map<string, vector<float>>::iterator it1;
     map<string, vector<float>>::iterator it2;
+    int size = it1->second.size();
     it1 = data.begin();
     float max, p, *firstVector, *secondVector;
     string firstFeature, secondFeature;
-    Point* points[it1->second.size()];
+    Point* points[size];
     while(it1 != data.end()) {
         max = 0;
         firstFeature = it1->first;
@@ -33,7 +34,7 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
         while(it2 != data.end()) {
             firstVector = &it1->second[0];
             secondVector = &it2->second[0];
-            p = fabs(pearson(firstVector,secondVector, it1->second.size()));
+            p = fabs(pearson(firstVector,secondVector, size));
             if (p > max && p >= 0.9){
                 secondFeature = it2->first;
                 max = p;
@@ -41,9 +42,9 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
             it2++;
         }
         if (!secondFeature.empty()) {
-            createPoints(points, firstVector, secondVector, it1->second.size());
+            createPoints(points, firstVector, secondVector, size);
             Line reg = linear_reg(points, it1->second.size());
-            correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, it1->second.size()) * 1.1};
+            correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, size) * 1.1};
             cf.push_back(c);
         }
         it1++;
