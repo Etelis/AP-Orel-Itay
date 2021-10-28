@@ -30,4 +30,20 @@ float dev(Point p,Line l);
 // returns the max deviation between point p and the line
 float maxDev(Point** points, Line reg, size_t size);
 
+class Line{
+public:
+	float a,b;
+	Line():a(0),b(0){}
+	Line(float a, float b):a(a),b(b){}
+	float f(float x){
+		return a*x+b;
+	}
+};
+
+class Point{
+public:
+	float x,y;
+	Point(float x, float y):x(x),y(y){}
+};
+
 #endif
