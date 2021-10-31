@@ -18,17 +18,22 @@ TimeSeries::TimeSeries(const char *CSVFileName):CSVFileName(CSVFileName) {
     myFile.open(CSVFileName);
     string featuresLine;
     map<string, vector<float>>::iterator it;
+    // get the line that represents the features names
     getline(myFile, featuresLine);
     stringstream ss(featuresLine);
+    // obtain each feature from the line
     string feature;
     while (getline(ss, feature, ',')) {
         data.insert(pair<string, vector<float>>(feature, {}));
     }
+    // iterate on each one of the lines separately
     string info;
     while(getline(myFile, info)) {
+        // iterate on the map
         it = data.begin();
         stringstream line(info);
         string value;
+        // add to every one of the features their value
         while(getline(line, value, ',')) {
             it->second.push_back(stof(value));
             it++;

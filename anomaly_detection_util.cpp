@@ -1,5 +1,5 @@
 /*
- * animaly_detection_util.cpp
+ * anomaly_detection_util.cpp
  *
  * Author: Itay Etelis - 209041474.
  *         Orel Ben Shamay - 318869658.
