@@ -21,7 +21,7 @@ void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFe
     for(int i = 0; i < size; i++) {
         if(dev(*points[i], reg) > threshold) {
             string description;
-            auto* r = new AnomalyReport(description.append(f1).append("-").append(f2), i);
+            auto* r = new AnomalyReport(description.append(f1).append("-").append(f2), i + 1);
             reports.push_back(*r);
         }
     }
@@ -52,7 +52,7 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
             firstVector = &it1->second[0];
             secondVector = &it2->second[0];
             p = fabs(pearson(firstVector,secondVector, size));
-            if (p > max && (p >= 0.9 || p <= -0.9)){
+            if (fabs(p) > max && fabs(p) >= 0.9){
                 secondFeature = it2->first;
                 max = p;
             }
@@ -60,9 +60,9 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
         }
         // if we found a correlated feature
         if (!secondFeature.empty()) {
-            createPoints(points, firstVector, secondVector, size);
+            createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], size);
             Line reg = linear_reg(points, size);
-            struct correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, size) * (float)1.1};
+            struct correlatedFeatures c = {firstFeature, secondFeature, max, reg, maxDev(points, reg, size) * (float)1.1};
             cf.push_back(c);
             freePoints(points, size);
         }
