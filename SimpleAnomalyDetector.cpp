@@ -14,7 +14,7 @@ void createPoints(Point** points, float* x, float* y, size_t size) {
     }
 }
 
-void x(vector<AnomalyReport>& reports, Point** points,const correlatedFeatures&  cf, size_t size) {
+void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFeatures&  cf, size_t size) {
     Line reg = cf.lin_reg;
     float threshold = cf.threshold;
     string f1 = cf.feature1, f2 = cf.feature2;
@@ -40,8 +40,8 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
     size_t size = it1->second.size();
     float max, p, *firstVector, *secondVector;
     string firstFeature, secondFeature;
-    Point* points[size];
     while(it1 != data.end()) {
+        Point* points[size];
         max = 0;
         p = 0;
         firstFeature = it1->first;
@@ -52,42 +52,41 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
             firstVector = &it1->second[0];
             secondVector = &it2->second[0];
             p = fabs(pearson(firstVector,secondVector, size));
-            if (p > max && p >= 0.9){
+            if (p > max && (p >= 0.9 || p <= -0.9)){
                 secondFeature = it2->first;
                 max = p;
             }
             it2++;
         }
+        // if we found a correlated feature
         if (!secondFeature.empty()) {
             createPoints(points, firstVector, secondVector, size);
-            Line reg = linear_reg(points, it1->second.size());
-            //TODO free allocated names
-
+            Line reg = linear_reg(points, size);
             struct correlatedFeatures c = {firstFeature, secondFeature, p, reg, maxDev(points, reg, size) * (float)1.1};
-            freePoints(points, size);
             cf.push_back(c);
+            freePoints(points, size);
         }
         it1++;
     }
-    //TODO free allocated points
 }
 
 vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     auto data = ts.getData();
     string feature1, feature2;
     float *v1, *v2;
-    size_t size;
-    Point* points[size];
+    size_t size = cf.size();
     vector<AnomalyReport> reports;
+    // iterate on every two correlated features in cf
     for(int i = 0; i < size; i++) {
         feature1 = cf[i].feature1;
         feature2 = cf[i].feature2;
-        size = data.find(feature1)->second.size();
+        size_t s = data.find(feature1)->second.size();
+        Point* points[s];
         v1 = &data.find(feature1)->second[0];
         v2 = &data.find(feature2)->second[0];
-        createPoints(points, v1, v2, size);
-        x(reports, points, cf[i] ,size);
-        freePoints(points, size);
+        createPoints(points, v1, v2, s);
+        detector(reports, points, cf[i] , s);
+        freePoints(points, s);
     }
     return reports;
 }

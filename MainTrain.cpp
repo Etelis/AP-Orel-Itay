@@ -41,6 +41,7 @@ void generateTestCSV(float a1,float b1, float a2, float b2, int anomaly){
 	out.close();
 }
 
+
 void checkCorrelationTrain(correlatedFeatures c,string f1, string f2, float a, float b){
 	if(c.feature1==f1){
 		if(c.feature2!=f2)
