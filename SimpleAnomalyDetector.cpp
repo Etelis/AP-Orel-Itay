@@ -2,19 +2,20 @@
 #include "SimpleAnomalyDetector.h"
 
 
-void freePoints(Point** points, size_t size){
+void SimpleAnomalyDetector:: freePoints(Point** points, size_t size){
     for (int i = 0; i < size; i++){
         free(points[i]);
     }
 }
 
-void createPoints(Point** points, float* x, float* y, size_t size) {
+void SimpleAnomalyDetector:: createPoints(Point** points, float* x, float* y, size_t size) {
     for(int i = 0; i < size; i++) {
         points[i] = new Point(x[i], y[i]);
     }
 }
 
-void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFeatures&  cf, size_t size) {
+void SimpleAnomalyDetector:: detector(vector<AnomalyReport>& reports, Point** points, const correlatedFeatures&  cf,
+                                    size_t size) {
     Line reg = cf.lin_reg;
     float threshold = cf.threshold;
     string f1 = cf.feature1, f2 = cf.feature2;
@@ -33,42 +34,53 @@ SimpleAnomalyDetector::~SimpleAnomalyDetector() {
 
 
 void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
+    // receive the data table.
     auto data = ts.getData();
-    map<string, vector<float>>::iterator it1;
-    map<string, vector<float>>::iterator it2;
-    it1 = data.begin();
-    size_t size = it1->second.size();
+    auto firstFeature_it = data.begin(), secondFeature_it = data.begin();
+    size_t vectorSize = firstFeature_it->second.size();
+    Point* points[vectorSize];
     float max, p, *firstVector, *secondVector;
     string firstFeature, secondFeature;
-    while(it1 != data.end()) {
-        Point* points[size];
+    for(; firstFeature_it != data.end(); firstFeature_it++) {
         max = 0;
-        p = 0;
-        firstFeature = it1->first;
-        secondFeature = "";
-        it2 = it1;
-        it2++;
-        while(it2 != data.end()) {
-            firstVector = &it1->second[0];
-            secondVector = &it2->second[0];
-            p = fabs(pearson(firstVector,secondVector, size));
-            if (fabs(p) > max && fabs(p) >= 0.9){
-                secondFeature = it2->first;
+        firstFeature = firstFeature_it->first;
+        secondFeature.clear();
+        secondFeature_it = firstFeature_it;
+        for(secondFeature_it++; secondFeature_it != data.end(); secondFeature_it++) {
+            firstVector = &firstFeature_it->second[0];
+            secondVector = &secondFeature_it->second[0];
+            p = fabs(pearson(firstVector, secondVector, vectorSize));
+            if (p > max && p >= CORRELATION_THRESHOLD){
+                secondFeature = secondFeature_it->first;
                 max = p;
             }
-            it2++;
         }
         // if we found a correlated feature
         if (!secondFeature.empty()) {
-            createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], size);
-            Line reg = linear_reg(points, size);
-            struct correlatedFeatures c = {firstFeature, secondFeature, max, reg, maxDev(points, reg, size) * (float)1.1};
+            createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], vectorSize);
+            Line reg = linear_reg(points, vectorSize);
+            struct correlatedFeatures c = {firstFeature, secondFeature, max, reg, maxDev(points, reg, vectorSize) *
+                    DEVIATION_THRESHOLD};
             cf.push_back(c);
-            freePoints(points, size);
+            freePoints(points, vectorSize);
         }
-        it1++;
     }
 }
+
+void SimpleAnomalyDetector:: createCorrelatedPair(const string& firstFeature, const string& secondFeature, map<string,
+        vector<float>>& data, float max){
+    size_t vectorSize = data.find(firstFeature)->second.size();
+    Point* points[vectorSize];
+    createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], vectorSize);
+    Line reg = linear_reg(points, vectorSize);
+    struct correlatedFeatures c = {firstFeature, secondFeature, max, reg, maxDev(points, reg, vectorSize) *
+                                                                          DEVIATION_THRESHOLD};
+    cf.push_back(c);
+    freePoints(points, vectorSize);
+}
+
+}
+
 
 vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     auto data = ts.getData();
