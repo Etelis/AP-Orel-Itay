@@ -28,7 +28,7 @@ void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFe
 }
 
 SimpleAnomalyDetector::~SimpleAnomalyDetector() {
-	// TODO Auto-generated destructor stub
+    // TODO Auto-generated destructor stub
 }
 
 
@@ -90,6 +90,3 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     }
     return reports;
 }
-
-
-
