@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <string.h>
 #include <math.h>
+#define CORRELATION_THRESHOLD 0.9
+#define DEVIATION_THRESHOLD float(1.1)
 
 struct correlatedFeatures {
 	string feature1,feature2;  // names of the correlated features
@@ -28,11 +30,11 @@ public:
 
 	virtual void learnNormal(const TimeSeries& ts);
 	virtual vector<AnomalyReport> detect(const TimeSeries& ts);
-
-	vector<correlatedFeatures> getNormalModel(){
-		return cf;
-	}
-
+    void freePoints(Point** points, size_t size);
+    void createPoints(Point** points, float* x, float* y, size_t size);
+    void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFeatures&  cf, size_t size);
+    void createCorrelatedPair(const string &firstFeature, const string &secondFeature, map<string, vector<float>> &data,
+                              float max);
 };
 
 

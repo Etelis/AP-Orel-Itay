@@ -14,7 +14,8 @@ public:
     const char *CSVFileName;
 
 	TimeSeries(const char* CSVfileName);
-
+    void insertRow(const string& rowInfo);
+    void insertFeatureNames(const string& featureNames);
     map<string, vector<float>> getData() const;
 };
 
