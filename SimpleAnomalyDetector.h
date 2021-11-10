@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <string.h>
 #include <math.h>
+#include <iostream>
 #define CORRELATION_THRESHOLD 0.9
 #define DEVIATION_THRESHOLD float(1.1)
 
@@ -26,15 +27,18 @@ public:
 	SimpleAnomalyDetector() {
 
     }
-	virtual ~SimpleAnomalyDetector();
+	virtual ~SimpleAnomalyDetector()=default;
 
 	virtual void learnNormal(const TimeSeries& ts);
 	virtual vector<AnomalyReport> detect(const TimeSeries& ts);
-    void freePoints(Point** points, size_t size);
-    void createPoints(Point** points, float* x, float* y, size_t size);
+    static void freePoints(Point** points, size_t size);
+    static void createPoints(Point** points, float* x, float* y, size_t size);
     void detector(vector<AnomalyReport>& reports, Point** points, const correlatedFeatures&  cf, size_t size);
     void createCorrelatedPair(const string &firstFeature, const string &secondFeature, map<string, vector<float>> &data,
                               float max);
+    vector<correlatedFeatures> getNormalModel(){
+        return cf;
+    }
 };
 
 
