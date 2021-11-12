@@ -7,18 +7,13 @@
 using namespace std;
 
 class TimeSeries{
-
 public:
-
     map<string, vector<float>> data;
     const char *CSVFileName;
-
-	TimeSeries(const char* CSVfileName);
+    TimeSeries(const char* CSVfileName);
     void insertRow(const string& rowInfo);
     void insertFeatureNames(const string& featureNames);
     map<string, vector<float>> getData() const;
 };
-
-
 
 #endif /* TIMESERIES_H_ */

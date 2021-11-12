@@ -5,7 +5,6 @@
  *         Orel Ben Shamay - 318869658.
  */
 
-#include <stdlib.h>
 #include <math.h>
 #include "anomaly_detection_util.h"
 
@@ -48,7 +47,7 @@ float cov(float* x, float* y, size_t size) {
     return (eXY - (eX*eY));
 }
 
-
+//TODO check division by zero
 float pearson(float* x, float* y, size_t size) {
     float c = cov(x, y, size);
     return c / ((sqrtf(var(x, size)) * sqrtf(var(y, size))));

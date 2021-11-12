@@ -1,17 +1,15 @@
-#include "timeseries.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iterator>
-#include <vector>
-#include <map>
-
 /*
  * timeseries.cpp
  *
  * Author: Itay Etelis - 209041474.
  *         Orel Ben Shamay - 318869658.
  */
+#include "timeseries.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <map>
 
 /**
  * TimeSeries Constructor - use given CSV file to create table for correlation detection.
@@ -20,7 +18,6 @@
 TimeSeries::TimeSeries(const char *CSVFileName):CSVFileName(CSVFileName) {
     ifstream tableFile;
     tableFile.exceptions ( ifstream::badbit );
-
     try {
         tableFile.open(CSVFileName);
         // The following string will hold all features names for future iterations.
@@ -32,12 +29,10 @@ TimeSeries::TimeSeries(const char *CSVFileName):CSVFileName(CSVFileName) {
         // After inserting all features to the map, insert for each element the corresponding value for each level.
         while (getline(tableFile, info))
             insertRow(info);
-        }
-
+    }
     catch (const ifstream::failure& e) {
         cout << "Exception opening/reading file";
     }
-
     tableFile.close();
 }
 
@@ -57,7 +52,7 @@ void TimeSeries:: insertRow(const string& rowInfo) {
 }
 
 /**
- * insertFeatureNames - receives a rwo with features names to insert, inserts it into the table.
+ * insertFeatureNames - receives a line with features names to insert, inserts it into the table.
  * @param featureNames - a string represents the feature names.
  */
 void TimeSeries:: insertFeatureNames(const string& featureNames) {
@@ -77,4 +72,3 @@ void TimeSeries:: insertFeatureNames(const string& featureNames) {
 map<string, vector<float>> TimeSeries::getData() const {
     return data;
 }
-
