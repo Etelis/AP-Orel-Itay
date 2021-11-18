@@ -16,6 +16,12 @@ class Point{
 public:
     float x,y;
     Point(float x, float y):x(x),y(y){}
+
+    Point subtract(const Point &p) const;
+
+    double distance(const Point &p) const;
+
+    double cross(const Point &p) const;
 };
 
 // returns the average of a float array.

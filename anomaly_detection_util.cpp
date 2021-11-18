@@ -87,3 +87,17 @@ float maxDev(Point** points, Line reg, size_t size) {
     }
     return max;
 }
+
+Point Point::subtract(const Point &p) const {
+    return Point{x - p.x, y - p.y};
+}
+
+
+double Point::distance(const Point &p) const {
+    return sqrt(pow(p.x - p.y, 2) + pow(x - y, 2));
+}
+
+
+double Point::cross(const Point &p) const {
+    return x * p.y - y * p.x;
+}
