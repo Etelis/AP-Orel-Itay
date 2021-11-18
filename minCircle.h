@@ -6,7 +6,7 @@
 #include <vector>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
-#include "../../assignment/anomaly_detection_util.h"
+#include "anomaly_detection_util.h"
 
 using namespace std;
 
@@ -19,9 +19,6 @@ public:
 	float radius;
 	Circle(Point c,float r):center(c),radius(r){}
 
-    bool contains(const Point &p) const;
-
-    bool contains(const vector<Point> &ps) const;
 };
 // --------------------------------------
 
