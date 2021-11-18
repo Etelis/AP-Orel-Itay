@@ -3,4 +3,6 @@ project(AP_Orel_Itay)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(AP_Orel_Itay anomaly_detection_util.h anomaly_detection_util.cpp MainTrain.cpp AnomalyDetector.h SimpleAnomalyDetector.cpp SimpleAnomalyDetector.h timeseries.cpp)
+add_executable(AP_Orel_Itay minCircle.h minCircle.cpp anomaly_detection_util.h anomaly_detection_util.cpp MainTrain.cpp
+        AnomalyDetector.h
+        SimpleAnomalyDetector.cpp SimpleAnomalyDetector.h timeseries.cpp)
