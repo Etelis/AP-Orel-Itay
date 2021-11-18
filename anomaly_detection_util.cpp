@@ -8,6 +8,7 @@
 #include <math.h>
 #include "anomaly_detection_util.h"
 
+
 float var(float* x, size_t size) {
     // obtain the average of the values
     float xAverage = avg(x, size);
