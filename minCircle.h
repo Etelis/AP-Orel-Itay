@@ -18,6 +18,10 @@ public:
 	Point center;
 	float radius;
 	Circle(Point c,float r):center(c),radius(r){}
+
+    bool contains(const Point &p) const;
+
+    bool contains(const vector<Point> &ps) const;
 };
 // --------------------------------------
 
