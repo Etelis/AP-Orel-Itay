@@ -1,0 +1,14 @@
+//
+// Created by orel on 02/12/2021.
+//
+
+#ifndef AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
+#define AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
+
+
+class HybridAnomalyDetector {
+
+};
+
+
+#endif //AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
