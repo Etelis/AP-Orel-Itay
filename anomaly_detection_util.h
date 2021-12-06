@@ -17,7 +17,6 @@ public:
     float x,y;
     Point(float x, float y):x(x),y(y){}
     double distance(const Point &p) const;
-
 };
 
 // returns the average of a float array.

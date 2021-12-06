@@ -1,14 +1,17 @@
-//
-// Created by orel on 02/12/2021.
-//
+#ifndef HYBRIDANOMALYDETECTOR_H_
+#define HYBRIDANOMALYDETECTOR_H_
+#define CORRELATION_THRESHOLD_2 0.5
+#include "SimpleAnomalyDetector.h"
+#include "minCircle.h"
 
-#ifndef AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
-#define AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
-
-
-class HybridAnomalyDetector {
-
+class HybridAnomalyDetector:public SimpleAnomalyDetector {
+public:
+	HybridAnomalyDetector() = default;
+    virtual ~HybridAnomalyDetector() = default;
+    virtual bool correlationTest(const float &p,const float &max);
+    virtual void createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t size,
+                                      Point** points, float max);
+    virtual bool checkPoint(Point p, const correlatedFeatures &features);
 };
 
-
-#endif //AP_OREL_ITAY_HYBRIDANOMALYDETECTOR_H
+#endif

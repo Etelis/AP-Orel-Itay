@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "timeseries.h"
-#include "math.h"
+#include <cmath>
 using namespace std;
 
 class AnomalyReport{

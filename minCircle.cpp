@@ -1,12 +1,18 @@
+/*
+ * minCircle.cpp
+ *
+ * Author: Itay Etelis - 209041474.
+ *         Orel Ben Shamay - 318869658.
+ */
+
 #include <random>
 #include "minCircle.h"
 #include "algorithm"
-#include "anomaly_detection_util.h"
 
 
 // check if a given circle contains a points, or if the points lies on the circle's boundaries
-bool containsPoint(const Circle& c, const Point& p) {
-    return c.center.distance(p) <= c.radius;
+bool Circle::containsPoint(const Point& p) const{
+    return center.distance(p) <= radius;
 }
 
 // create a circle with two given points on its sphere
@@ -46,7 +52,7 @@ Circle findMinCircleRecursion(vector<Point> &v_points, size_t size, vector<Point
         // get the minimum circle without the last point
         Circle c = findMinCircleRecursion(v_points, size - 1, boundary);
         // if the circle contains v_points[i - 1] then return the circle
-        if (containsPoint(c, p)) {
+        if (c.containsPoint(p)) {
             return c;
         }
         // else the point has to be on the boundary of the circle
@@ -69,7 +75,3 @@ Circle findMinCircle(Point** points, size_t size) {
     vector<Point> boundary = {};
     return findMinCircleRecursion(v_points, v_points.size(), {});
 }
-
-
-
-

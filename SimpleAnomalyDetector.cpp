@@ -34,15 +34,13 @@ void SimpleAnomalyDetector:: createPoints(Point** points, float* x, float* y, si
  * detector - will help detect all deviations and report them.
  * @param reports - current report.
  * @param points - points array.
- * @param cp - correlated pair.
+ * @param cf - correlated pair.
  * @param size - size of points array.
  */
-void SimpleAnomalyDetector:: detector(Point** points, const correlatedFeatures&  cp, size_t size) {
-    Line reg = cp.lin_reg;
-    float threshold = cp.threshold;
-    string firstFeature = cp.feature1, secondFeature = cp.feature2;
+void SimpleAnomalyDetector:: detector(Point** points, const correlatedFeatures&  cf, size_t size) {
+    string firstFeature = cf.feature1, secondFeature = cf.feature2;
     for (int i = 0; i < size; i++) {
-        if (dev(*points[i], reg) > threshold) {
+        if (checkPoint(*points[i], cf)) {
             string description;
             auto r = new AnomalyReport(description.append(firstFeature).append("-").append(secondFeature), i + 1);
             reports.push_back(*r);
@@ -74,14 +72,19 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
             // Calculate p from given formula.
             p = fabs(pearson(&firstFeature_it->second[0], &secondFeature_it->second[0], vectorSize));
             // If fitting correlation has been found update max parameters.
-            if (p > max && p >= CORRELATION_THRESHOLD){
+            if (correlationTest(p, max)){
                 secondFeature = secondFeature_it->first;
                 max = p;
             }
         }
         // If correlated feature was found create a new pair by inserting into the correlation vector.
-        if (!secondFeature.empty())
-            createCorrelatedPair(firstFeature, secondFeature, data, max);
+        if (!secondFeature.empty()) {
+            size_t size = data.find(firstFeature)->second.size();
+            Point *points[vectorSize];
+            createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], size);
+            createCorrelatedPair(firstFeature, secondFeature, size, points, max);
+            freePoints(points, vectorSize);
+        }
     }
 }
 
@@ -92,16 +95,13 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
  * @param data - data table.
  * @param max - max correlation found.
  */
-void SimpleAnomalyDetector:: createCorrelatedPair(const string& firstFeature, const string& secondFeature, map<string,
-        vector<float>>& data, float max) {
-    size_t vectorSize = data.find(firstFeature)->second.size();
-    Point* points[vectorSize];
-    createPoints(points, &data.find(firstFeature)->second[0], &data.find(secondFeature)->second[0], vectorSize);
+void SimpleAnomalyDetector::createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t vectorSize,
+                                                  Point** points, float max) {
     Line reg = linear_reg(points, vectorSize);
-    struct correlatedFeatures c = {firstFeature, secondFeature, max, reg, maxDev(points, reg, vectorSize) *
-                                                                          DEVIATION_THRESHOLD};
+    float threshold = maxDev(points, reg, vectorSize);
+    correlatedFeatures c = {firstFeature, secondFeature, max, reg,
+                                   threshold * DEVIATION_THRESHOLD};
     cf.push_back(c);
-    freePoints(points, vectorSize);
 }
 
 
@@ -122,9 +122,18 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
         Point* points[s];
         // create points from the features values
         createPoints(points, &data.find(feature1)->second[0], &data.find(feature2)->second[0], s);
-        // detect deviation
         detector(points, cf[i] , s);
         freePoints(points, s);
     }
     return reports;
 }
+
+bool SimpleAnomalyDetector::correlationTest(const float &p, const float &max) {
+    return p > max && p >= CORRELATION_THRESHOLD;
+}
+
+bool SimpleAnomalyDetector::checkPoint(Point p, const correlatedFeatures &features) {
+    return (dev(p, features.lin_reg) > features.threshold);
+}
+
+
