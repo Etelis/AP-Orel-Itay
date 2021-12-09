@@ -5,7 +5,6 @@
  *         Orel Ben Shamay - 318869658.
  */
 
-#include <math.h>
 #include "anomaly_detection_util.h"
 
 
@@ -87,9 +86,5 @@ float maxDev(Point** points, Line reg, size_t size) {
         max = max < temp ? temp : max;
     }
     return max;
-}
-
-double Point::distance(const Point &p) const {
-    return sqrt(pow(this->x - p.x, 2) + pow(this->y-p.y, 2));
 }
 

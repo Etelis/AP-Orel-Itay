@@ -1,6 +1,7 @@
 #ifndef ANOMALYDETECTORUTIL_H_
 #define ANOMALYDETECTORUTIL_H_
 #include <cstddef>
+#include <math.h>
 
 class Line{
 public:
@@ -16,7 +17,7 @@ class Point{
 public:
     float x,y;
     Point(float x, float y):x(x),y(y){}
-    double distance(const Point &p) const;
+    double distance(const Point &p) const{ return sqrt(pow(this->x - p.x, 2) + pow(this->y-p.y, 2)); }
 };
 
 // returns the average of a float array.
