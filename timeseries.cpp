@@ -12,7 +12,7 @@
 #include <map>
 
 /**
- * TimeSeries Constructor - use given CSV file to create table for correlation detection.
+ * TimeSeries Constructor - use given CSV file to create table for corrlation detection.
  * @param CSVFileName - the given CSV file table.
  */
 TimeSeries::TimeSeries(const char *CSVFileName):CSVFileName(CSVFileName) {

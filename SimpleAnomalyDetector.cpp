@@ -6,6 +6,8 @@
  */
 #include "SimpleAnomalyDetector.h"
 
+#include <utility>
+
 /**
  * freePoints - free created points.
  * @param points - points array.
@@ -34,13 +36,13 @@ void SimpleAnomalyDetector:: createPoints(Point** points, float* x, float* y, si
  * detector - will help detect all deviations and report them.
  * @param reports - current report.
  * @param points - points array.
- * @param cf - correlated pair.
+ * @param feature - correlated pair.
  * @param size - size of points array.
  */
-void SimpleAnomalyDetector:: detector(Point** points, const correlatedFeatures&  cf, size_t size) {
-    string firstFeature = cf.feature1, secondFeature = cf.feature2;
+void SimpleAnomalyDetector:: detector(Point** points, const correlatedFeatures&  feature, size_t size) {
+    string firstFeature = feature.feature1, secondFeature = feature.feature2;
     for (int i = 0; i < size; i++) {
-        if (checkPoint(*points[i], cf)) {
+        if (checkPoint(*points[i], feature)) {
             string description;
             auto r = new AnomalyReport(description.append(firstFeature).append("-").append(secondFeature), i + 1);
             reports.push_back(*r);
@@ -61,23 +63,23 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
     size_t vectorSize = firstFeature_it->second.size();
     float max, p;
     string firstFeature, secondFeature;
-    // Run on all features and detect suitable correlation and insert into the correlation vector.
+    // Run on all features and detect suitable corrlation and insert into the corrlation vector.
     for(; firstFeature_it != data.end(); firstFeature_it++) {
         max = 0;
         firstFeature = firstFeature_it->first;
         secondFeature.clear();
         secondFeature_it = firstFeature_it;
-        // Iterate on the rest of the features and detect correlation.
+        // Iterate on the rest of the features and detect corrlation.
         for(++secondFeature_it; secondFeature_it != data.end(); secondFeature_it++) {
             // Calculate p from given formula.
             p = fabs(pearson(&firstFeature_it->second[0], &secondFeature_it->second[0], vectorSize));
-            // If fitting correlation has been found update max parameters.
+            // If fitting corrlation has been found update max parameters.
             if (correlationTest(p, max)){
                 secondFeature = secondFeature_it->first;
                 max = p;
             }
         }
-        // If correlated feature was found create a new pair by inserting into the correlation vector.
+        // If correlated feature was found create a new pair by inserting into the corrlation vector.
         if (!secondFeature.empty()) {
             size_t size = data.find(firstFeature)->second.size();
             Point *points[vectorSize];
@@ -93,15 +95,13 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
  * @param firstFeature - first feature's name.
  * @param secondFeature - second feature's name.
  * @param data - data table.
- * @param max - max correlation found.
+ * @param max - max corrlation found.
  */
 void SimpleAnomalyDetector::createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t vectorSize,
                                                   Point** points, float max) {
     Line reg = linear_reg(points, vectorSize);
     float threshold = maxDev(points, reg, vectorSize);
-    correlatedFeatures c = {firstFeature, secondFeature, max, reg,
-                                   threshold * DEVIATION_THRESHOLD};
-    cf.push_back(c);
+    insertCorrelatedFeatures(firstFeature, secondFeature, max, reg,threshold * DEVIATION_THRESHOLD, DEFAULT_POINT);
 }
 
 
@@ -128,12 +128,40 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
     return reports;
 }
 
+/**
+ * correlationTest - check if correlation exists according to arguments sent.
+ * @param p - pearson.
+ * @param max - max pearson achieved so far.
+ * @return - if corrlelation was found according to threshold set return true, otherwise false.
+ */
 bool SimpleAnomalyDetector::correlationTest(const float &p, const float &max) {
     return p > max && p >= CORRELATION_THRESHOLD;
 }
 
-bool SimpleAnomalyDetector::checkPoint(Point p, const correlatedFeatures &features) {
-    return (dev(p, features.lin_reg) > features.threshold);
+/**
+ * checkPoint - check if given point is inside the circle_center.
+ * @param p - the point.
+ * @param feature - the current correlated feature.
+ * @return true - if point is inside the circle_center, otherwise false.
+ */
+bool SimpleAnomalyDetector::checkPoint(Point p, const correlatedFeatures &feature) {
+    return (dev(p, feature.lin_reg) > feature.threshold);
 }
+
+/**
+ *
+ * @param firstFeature - first feature's name
+ * @param secondFeature - second feature's name
+ * @param max - max pearson.
+ * @param reg - line reg
+ * @param maxThreshold - maxThreshold for line / circle.
+ * @param center - circle center - if non provided will use default.
+ */
+void SimpleAnomalyDetector::insertCorrelatedFeatures(string firstFeature, string secondFeature, float max, Line reg,
+                                                     float maxThreshold, Point center) {
+    struct correlatedFeatures c = {std::move(firstFeature), std::move(secondFeature), max, reg, maxThreshold, center};
+    cf.push_back(c);
+}
+
 
 

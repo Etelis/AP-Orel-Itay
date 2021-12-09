@@ -10,12 +10,12 @@
 #include "algorithm"
 
 
-// check if a given circle contains a points, or if the points lies on the circle's boundaries
+// check if a given circle_center contains a points, or if the points lies on the circle_center's boundaries
 bool Circle::containsPoint(const Point& p) const{
     return center.distance(p) <= radius;
 }
 
-// create a circle with two given points on its sphere
+// create a circle_center with two given points on its sphere
 Circle createCircleTwoPoints(const Point &a, const Point &b) {
     float x = (a.x + b.x) / 2.0;
     float y = (a.y + b.y) / 2.0;
@@ -23,7 +23,7 @@ Circle createCircleTwoPoints(const Point &a, const Point &b) {
     return Circle{m, static_cast<float>(m.distance(a))};
 }
 
-// creates a circle with three points on its sphere
+// creates a circle_center with three points on its sphere
 Circle createCircleThreePoints (const Point &p1, const Point &p2, const Point &p3) {
     float a = p2.x - p1.x;
     float b = p2.y - p1.y;
@@ -49,15 +49,15 @@ Circle findMinCircleRecursion(vector<Point> &v_points, size_t size, vector<Point
         return createCircleTwoPoints(v_points.at(0), boundary.at(0));
     } else {
         Point p = v_points.at(size - 1);
-        // get the minimum circle without the last point
+        // get the minimum circle_center without the last point
         Circle c = findMinCircleRecursion(v_points, size - 1, boundary);
-        // if the circle contains v_points[i - 1] then return the circle
+        // if the circle_center contains v_points[i - 1] then return the circle_center
         if (c.containsPoint(p)) {
             return c;
         }
-        // else the point has to be on the boundary of the circle
+        // else the point has to be on the boundary of the circle_center
         boundary.push_back(p);
-        // return the minimum circle without the last point in v_points, and with the last point on the boundary points
+        // return the minimum circle_center without the last point in v_points, and with the last point on the boundary points
         return findMinCircleRecursion(v_points, size - 1, boundary);
     }
 }

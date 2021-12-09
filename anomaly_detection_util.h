@@ -31,7 +31,7 @@ float cov(float* x,  float* y, size_t size);
 // returns the average of both arrays x and y when multiplying each value.
 float multiplyAvg(float* x, float* y, size_t size);
 
-// returns the Pearson correlation coefficient of X and Y.
+// returns the Pearson corrlation coefficient of X and Y.
 float pearson(float* x, float* y, size_t size);
 
 // performs a linear regression and returns the line equation.

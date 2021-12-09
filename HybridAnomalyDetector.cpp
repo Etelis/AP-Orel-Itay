@@ -6,15 +6,30 @@
  */
 #include "HybridAnomalyDetector.h"
 
+/**
+ * correlationTest - check if correlation exists according to arguments sent.
+ * @param p - pearson.
+ * @param max - max pearson achieved so far.
+ * @return - if corrlelation was found according to threshold set return true, otherwise false.
+ */
 bool HybridAnomalyDetector::correlationTest(const float &p, const float &max) {
     return (p > max) && (p >= CORRELATION_THRESHOLD || p >= CORRELATION_THRESHOLD_2);
 }
 
-bool HybridAnomalyDetector::checkPoint(Point p, const correlatedFeatures &features) {
-    if (features.circle.radius != -1) {
-       return !features.circle.containsPoint(p);
+/**
+ * checkPoint - check if given point is inside the circle_center.
+ * @param p - the point.
+ * @param feature - the current correlated feature.
+ * @return true - if point is inside the circle_center, otherwise false.
+ */
+bool HybridAnomalyDetector::checkPoint(Point p, const correlatedFeatures &feature) {
+    // check if the current feature matches the linear correlation.
+    if (feature.corrlation >= CORRELATION_THRESHOLD) {
+        // if so, check if point correlated to line.
+        return SimpleAnomalyDetector::checkPoint(p,feature);
+       // otherwise, confirm point is inside the circle provided by current feature.
     } else {
-        return (dev(p, features.lin_reg) > features.threshold);
+        return !Circle{feature.circle_center, feature.threshold}.containsPoint(p);
     }
 }
 
@@ -27,16 +42,13 @@ bool HybridAnomalyDetector::checkPoint(Point p, const correlatedFeatures &featur
  */
 void HybridAnomalyDetector::createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t size,
                                                  Point** points, float max) {
-    struct correlatedFeatures c;
+    // check if the correlation value is above threshold defined for linear correlation.
     if (max >= CORRELATION_THRESHOLD) {
-        Line reg = linear_reg(points, size);
-        float threshold = maxDev(points, reg, size);
-        c = *new correlatedFeatures{firstFeature, secondFeature, max, reg, threshold * DEVIATION_THRESHOLD};
+        SimpleAnomalyDetector::createCorrelatedPair(firstFeature, secondFeature, size, points, max);
     } else if (max >= CORRELATION_THRESHOLD_2){
         Circle min = findMinCircle(points, size);
-        Circle circ = Circle(min.center, min.radius * DEVIATION_THRESHOLD);
-        c = *new correlatedFeatures{firstFeature, secondFeature, max, Line(), 0, circ};
+        insertCorrelatedFeatures(firstFeature, secondFeature, max, Line(),
+                                 min.radius * DEVIATION_THRESHOLD, min.center);
     }
-    cf.push_back(c);
 }
 
