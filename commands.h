@@ -135,51 +135,35 @@ public:
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size(), startTime, endTime;
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size();
         auto reportVec = reportVector();
-        auto anomalyVec = anomalyVector();
-
-        for(const auto& exception_report : anomalyVec) {
-            startTime = exception_report.first;
-            endTime = exception_report.second;
-            for(const auto& report : reportVec){
-
-            }
-        }
+        auto anomalyVec = anomalyVector(P, N);
     }
 
     vector<pair<int,int>> reportVector(){
         int startTime, currentTime;
-        bool first_iter = true;
         string currentDescription;
         vector<pair<int,int>> reportVec;
-
-
-        for(const auto& report : sc->ar) {
-
-            if (first_iter){
-                startTime = sc->ar.begin()->timeStep;
-                currentTime = startTime;
-                currentDescription = sc->ar.begin()->description;
-                first_iter = false;
-            }
-
-            else if (report.description == currentDescription && report.timeStep == currentTime + 1) {
-                currentTime += 1; }
-
-            else {
+        startTime = sc->ar.begin()->timeStep;
+        currentTime = startTime;
+        currentDescription = sc->ar.begin()->description;
+        for(const auto& report : sc->ar){
+            if (report.description != currentDescription){
                 currentDescription = report.description;
-                pair<int, int> tempPair(startTime, currentTime);
+                pair<int,int> tempPair(startTime,currentTime);
                 reportVec.push_back(tempPair);
                 startTime = report.timeStep;
-                currentTime = startTime; }
+                currentTime = startTime;
+            }
+            else
+                currentTime = report.timeStep;
         }
         return reportVec;
     }
 
-    vector<pair<int, int>> anomalyVector() {
-        unsigned int splitLocation, startTime, endTime;
-        vector<pair<int,int>> reportVec;
+    vector<pair<int, int>> anomalyVector(int &P, int &N) {
+        int splitLocation, startTime, endTime;
+        vector<pair<int,int>> anomalyVec;
         dio->write(uploadComment);
         string input = dio->read();
         // while the read line is not "done"
@@ -187,8 +171,13 @@ public:
             splitLocation = input.find(',');
             startTime = stoi(input.substr(0,splitLocation));
             endTime = stoi(input.substr(splitLocation + 1));
+            pair<int,int> tempPair(startTime,endTime);
+            anomalyVec.push_back(tempPair);
+            N = N - (endTime - startTime);
+            P++;
             input = dio->read();
         }
+        return anomalyVec;
     }
 };
 
