@@ -4,7 +4,7 @@
 #define CLI_H_
 
 #include <string.h>
-#include "../../assignment/commands.h"
+#include "commands.h"
 
 using namespace std;
 
