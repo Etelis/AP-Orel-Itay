@@ -23,7 +23,8 @@ void CLI::start(){
 }
 
 void CLI::printMenu() {
-
+    this->dio->write("Welcome to the Anomaly Detection Server.\n");
+    this->dio->write("Please choose an option:\n");
     for(auto & command : this->commands) {
         this->dio->write(command->description);
     }

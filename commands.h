@@ -1,10 +1,12 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
 
-#include<iostream>
+
 #include <string.h>
 #include <fstream>
 #include <vector>
+#include <memory>
+#include <sstream>
 #include "HybridAnomalyDetector.h"
 
 using namespace std;
@@ -26,6 +28,8 @@ public:
 };
 
 
+
+// you may edit this class
 class Command {
 protected:
 	DefaultIO* dio;
@@ -40,12 +44,12 @@ public:
 class uploadCommand : public Command {
 public:
     uploadCommand(DefaultIO* dio):Command(dio) {
-        this->description = "1.upload a time series CSV file\n";
+        this->description = "1.upload a time series csv file\n";
     }
     void execute() override {
         ofstream train, test;
-        train.open("anomalyTrain.csv");
-        test.open("anomalyTest.csv");
+        train.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv");
+        test.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv");
         dio->write("Please upload your local train CSV file.\n");
         string input = dio->read();
         // while the read line is not "done"
@@ -77,6 +81,7 @@ public:
     }
     void execute() override {
         dio->write("The current correlation threshold is" + to_string(sc->desiredThreshHold) + "\n");
+        dio->write("Type a new threshold\n");
         float newThreshold;
         newThreshold = stof(dio->read());
         while(newThreshold <= 0 || newThreshold >= 1) {
@@ -91,9 +96,9 @@ public:
 
 class detect_anomalies : public Command{
     sharedContent *sc;
-    const char* trainCSV = "anomalyTrain.csv";
-    const char* testCSV = "anomalyTrain.csv";
-    const char* detectionCompleteMSG = "anomaly detection complete\n";
+    const char* trainCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv";
+    const char* testCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv";
+    const char* detectionCompleteMSG = "anomaly detection complete.\n";
 public:
     detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
         this->description = "3.detect anomalies\n";
@@ -137,19 +142,21 @@ public:
     }
 
     void execute() override{
-        int P = 0, startTime, endTime;
-        int N = TimeSeries("anomalyTest.csv").getData().begin()->second.size();
-        int s, t, FP = 0, TP = 0;
+        int P = 0, s, t, FP = 0, TP = 0, startTime, endTime;
+        int  N = TimeSeries("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv").getData().begin()->second
+                .size();
         float TPrate, FPrate;
         bool intersecting;
+        stringstream TPstream, FPstream;
         auto reportVec = reportVector();
         auto anomalyVec = anomalyVector(P, N);
         dio->write(uploadComplete);
-        for(const auto& exception_report : anomalyVec) {
+
+        for(const auto& exception_report : reportVec) {
             intersecting = false;
             startTime = exception_report.first;
             endTime = exception_report.second;
-            for(const auto& report : reportVec){
+            for(const auto& report : anomalyVec){
                 s = report.first;
                 t = report.second;
                 if ((startTime <= s && endTime >= s) || (startTime >= s && startTime <= t)){
@@ -160,10 +167,14 @@ public:
             if (!intersecting)
                 FP++;
         }
+
         TPrate = (float) floor(TP * 1000 / P) / 1000;
         FPrate = (float) floor(FP * 1000 / N) / 1000;
-        dio->write(truePositiveComment + to_string(TPrate) + "\n");
-        dio->write(falsePositiveComment + to_string(FPrate) + "\n");
+        TPstream << TPrate;
+        FPstream << FPrate;
+
+        dio->write(truePositiveComment + TPstream.str() + "\n");
+        dio->write(falsePositiveComment + FPstream.str() + "\n");
     }
 
     vector<pair<int,int>> reportVector(){
@@ -173,9 +184,9 @@ public:
         startTime = sc->ar.begin()->timeStep;
         currentTime = startTime;
         currentDescription = sc->ar.begin()->description;
-        for(int i =1;i < sc->ar.size(); i++){
-            auto report = sc->ar.at(i);
-            if (report.description != currentDescription || report.timeStep != currentTime + 1){
+        for(int i = 1; i < sc->ar.size() - 1; i++){
+            auto report = sc->ar[i];
+            if (report.description != currentDescription || report.timeStep != currentTime + 1 ){
                 currentDescription = report.description;
                 pair<int,int> tempPair(startTime,currentTime);
                 reportVec.push_back(tempPair);
@@ -185,8 +196,13 @@ public:
             else
                 currentTime = report.timeStep;
         }
+
+        pair<int,int> tempPair(startTime,currentTime);
+        reportVec.push_back(tempPair);
+
         return reportVec;
     }
+
 
     vector<pair<int, int>> anomalyVector(int &P, int &N) {
         int splitLocation, startTime, endTime;
@@ -211,9 +227,10 @@ public:
 class finishCommand : public Command{
 public:
     finishCommand(DefaultIO* dio) : Command(dio) {
-        this->description = "exit";
+        this->description = "6.exit\n";
     }
     void execute() override {}
 };
+
 
 #endif /* COMMANDS_H_ */

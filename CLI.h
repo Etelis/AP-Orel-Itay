@@ -4,6 +4,7 @@
 #define CLI_H_
 
 #include <string.h>
+#include <memory>
 #include "commands.h"
 
 using namespace std;
