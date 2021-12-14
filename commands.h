@@ -20,7 +20,11 @@ public:
 	// you may add additional methods here
 };
 
-// you may add here helper classes
+struct sharedContent{
+    HybridAnomalyDetector hd;
+    float desiredThreshHold = 0.9;
+    vector<AnomalyReport> ar;
+};
 
 
 // you may edit this class
@@ -66,11 +70,24 @@ public:
 };
 
 class algoSettingCommand : public Command {
-    algoSettingCommand(DefaultIO* dio): Command(dio) {
+    sharedContent* sc;
+    algoSettingCommand(DefaultIO* dio, sharedContent* sc): Command(dio) {
         this->description = "2. algorithm settings\n";
+        this->sc = sc;
     }
-    void execute() {
+    void execute() override {
+        dio->write("The current correlation threshold is" + to_string(sc->desiredThreshHold) + "\n");
+        float newThreshold;
+        newThreshold = stof(dio->read());
+        while(newThreshold <= 0 || newThreshold >= 1) {
+            dio->write("please choose a value between 0 and 1.\n");
+            newThreshold = stof(dio->read());
+        }
+        sc->desiredThreshHold = newThreshold;
+        sc->hd.correlation = newThreshold;
     }
 };
+
+
 
 #endif /* COMMANDS_H_ */

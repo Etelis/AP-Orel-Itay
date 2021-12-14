@@ -1,11 +1,4 @@
-//
-// Created by Itay on 12/14/2021.
-//
 
-struct sharedContent{
-    HybridAnomalyDetector hd;
-    float desiredThreshHold;
-};
 
 // implement here your command classes
 class detect_anomalies : public Command{
