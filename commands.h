@@ -135,9 +135,9 @@ public:
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData();
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size();
         auto reportVec = reportVector();
-        auto anomalyVec = anomalyVector();
+        auto anomalyVec = anomalyVector(P, N);
     }
 
     vector<pair<int,int>> reportVector(){
@@ -161,9 +161,9 @@ public:
         return reportVec;
     }
 
-    vector<pair<int, int>> anomalyVector() {
-        unsigned int splitLocation, startTime, endTime;
-        vector<pair<int,int>> reportVec;
+    vector<pair<int, int>> anomalyVector(int &P, int &N) {
+        int splitLocation, startTime, endTime;
+        vector<pair<int,int>> anomalyVec;
         dio->write(uploadComment);
         string input = dio->read();
         // while the read line is not "done"
@@ -171,8 +171,13 @@ public:
             splitLocation = input.find(',');
             startTime = stoi(input.substr(0,splitLocation));
             endTime = stoi(input.substr(splitLocation + 1));
+            pair<int,int> tempPair(startTime,endTime);
+            anomalyVec.push_back(tempPair);
+            N = N - (endTime - startTime);
+            P++;
             input = dio->read();
         }
+        return anomalyVec;
     }
 };
 
