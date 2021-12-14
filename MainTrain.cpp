@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "../../assignment/commands.h"
+#include "commands.h"
 #include "CLI.h"
 
 using namespace std;

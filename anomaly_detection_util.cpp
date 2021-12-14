@@ -87,4 +87,3 @@ float maxDev(Point** points, Line reg, size_t size) {
     }
     return max;
 }
-
