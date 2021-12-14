@@ -39,11 +39,6 @@ class AnomalyDetectionHandler:public ClientHandler{
     }
 };
 
-void handle_alarm(int) {
-    perror("timeout waiting for client.");
-    exit(EXIT_FAILURE);
-}
-
 // implement on Server.cpp
 class Server {
 	thread* t; // the thread to run the start() method in

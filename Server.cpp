@@ -20,6 +20,11 @@ Server::Server(int port)throw (const char*) {
 
 }
 
+void handle_alarm(int) {
+    perror("timeout waiting for client.");
+    exit(EXIT_FAILURE);
+}
+
 void Server::start(ClientHandler& ch)throw(const char*){
     int clientFD;
     signal( SIGALRM, handle_alarm);
