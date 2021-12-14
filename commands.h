@@ -21,10 +21,12 @@ public:
 };
 
 struct sharedContent{
+public:
     HybridAnomalyDetector hd;
     float desiredThreshHold = 0.9;
     vector<AnomalyReport> ar;
 };
+
 
 
 // you may edit this class
@@ -125,6 +127,56 @@ public:
     }
 };
 
+class analyze_result : public Command{
+    string uploadComment = "Please upload your local anomalies file.\n";
+    sharedContent *sc;
+
+public:
+    analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
+        this->description = "5. upload anomalies and analyze results\n";}
+
+    void execute() override{
+        unsigned int splitLocation, startTime, endTime;
+        string input;
+        auto reportVec = this->sc.reportVector();
+        auto reportVec_iter = reportVec.begin();
+        dio->write(uploadComment);
+        input = dio->read();
+
+        // while the read line is not "done"
+        while(input != "done") {
+            splitLocation = input.find(',');
+            startTime = stoi(input.substr(0,splitLocation));
+            endTime = stoi(input.substr(splitLocation + 1));
+
+            input = dio->read();
+        }
+
+
+    }
+    vector<pair<int,int>> reportVector(){
+        int startTime, currentTime;
+        string currentDescription;
+        vector<pair<int,int>> reportVec;
+
+        startTime = sc->ar.begin()->timeStep;
+        currentTime = startTime;
+        currentDescription = sc->ar.begin()->description;
+
+        for(const auto& report : sc->ar){
+            if (report.description != currentDescription){
+                currentDescription = report.description;
+                pair<int,int> tempPair(startTime,currentTime);
+                reportVec.push_back(tempPair);
+                startTime = report.timeStep;
+                currentTime = startTime;
+            }
+            else
+                currentTime = report.timeStep;
+        }
+        return reportVec;
+    }
+};
 
 
 #endif /* COMMANDS_H_ */

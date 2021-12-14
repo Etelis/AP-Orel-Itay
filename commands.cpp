@@ -1,36 +1,31 @@
-// implement here your command classes
-class detect_anomalies : public Command{
-    string description = "3. detect anomalies\n";
-    const char* trainCSV = "anomalyTrain.csv";
-    const char* testCSV = "anomalyTrain.csv";
-    const char* detectionCompleteMSG = "anomaly detection complete\n";
-    sharedContent *sc;
 
-public:
-    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
-    void execute() override{
-        TimeSeries testTimeSeries(testCSV);
-        TimeSeries trainTimeSeries(trainCSV);
+void sortReports(){
+    sort(ar.begin(), ar.end(), [](const AnomalyReport& lhs, const AnomalyReport& rhs) {
 
-        sc->hd.learnNormal(trainTimeSeries);
-        sc->ar = sc->hd.detect(testTimeSeries);
-        dio->write(detectionCompleteMSG);
-    }
+        if (lhs.description == rhs.description)
+            return lhs.timeStep > rhs.timeStep;
 
+        return  lhs.description > rhs.description;
+    });
 };
 
-class display_results : public Command{
-    string description = "4. display results\n";
-    sharedContent *sc;
+vector<pair<int,int>> reportVector(){
+    int startTime, currentTime;
+    vector<pair<int,int>> reportVec;
 
-public:
-    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
-    void execute() override{
-        string format, done = "done\n";
-        for (const auto& report : sc->ar){
-            format.append((to_string(report.timeStep) + "\t" + report.description + "\n"));
+    sortReports();
+    startTime = ar.begin()->timeStep;
+    currentTime = startTime;
+
+    for(const auto& report : ar){
+        if (report.timeStep != currentTime + 1){
+            pair<int,int> tempPair(startTime,currentTime);
+            reportVec.push_back(tempPair);
+            startTime = report.timeStep;
+            currentTime = startTime;
         }
-        format.append(done);
-        dio->write(format);
+        else
+            currentTime = report.timeStep;
     }
-};
+    return reportVec;
+}
