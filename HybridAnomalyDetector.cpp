@@ -13,7 +13,7 @@
  * @return - if corrlelation was found according to threshold set return true, otherwise false.
  */
 bool HybridAnomalyDetector::correlationTest(const float &p, const float &max) {
-    return (p > max) && (p >= CORRELATION_THRESHOLD || p >= CORRELATION_THRESHOLD_2);
+    return (p > max) && (p >= correlation || p >= CORRELATION_THRESHOLD_2);
 }
 
 /**
@@ -24,7 +24,7 @@ bool HybridAnomalyDetector::correlationTest(const float &p, const float &max) {
  */
 bool HybridAnomalyDetector::checkPoint(Point p, const correlatedFeatures &feature) {
     // check if the current feature matches the linear correlation.
-    if (feature.corrlation >= CORRELATION_THRESHOLD) {
+    if (feature.corrlation >= correlation) {
         // if so, check if point correlated to line.
         return SimpleAnomalyDetector::checkPoint(p,feature);
        // otherwise, confirm point is inside the circle provided by current feature.
@@ -43,7 +43,7 @@ bool HybridAnomalyDetector::checkPoint(Point p, const correlatedFeatures &featur
 void HybridAnomalyDetector::createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t size,
                                                  Point** points, float max) {
     // check if the correlation value is above threshold defined for linear correlation.
-    if (max >= CORRELATION_THRESHOLD) {
+    if (max >= correlation) {
         SimpleAnomalyDetector::createCorrelatedPair(firstFeature, secondFeature, size, points, max);
     } else if (max >= CORRELATION_THRESHOLD_2){
         Circle min = findMinCircle(points, size);

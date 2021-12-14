@@ -73,7 +73,7 @@ void SimpleAnomalyDetector::learnNormal(const TimeSeries& ts){
         for(++secondFeature_it; secondFeature_it != data.end(); secondFeature_it++) {
             // Calculate p from given formula.
             p = fabs(pearson(&firstFeature_it->second[0], &secondFeature_it->second[0], vectorSize));
-            // If fitting corrlation has been found update max parameters.
+            // If fitting correlation has been found update max parameters.
             if (correlationTest(p, max)){
                 secondFeature = secondFeature_it->first;
                 max = p;
@@ -135,7 +135,7 @@ vector<AnomalyReport> SimpleAnomalyDetector::detect(const TimeSeries& ts){
  * @return - if corrlelation was found according to threshold set return true, otherwise false.
  */
 bool SimpleAnomalyDetector::correlationTest(const float &p, const float &max) {
-    return p > max && p >= CORRELATION_THRESHOLD;
+    return p > max && p >= correlation;
 }
 
 /**

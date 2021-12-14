@@ -30,6 +30,7 @@ struct correlatedFeatures {
 
 class SimpleAnomalyDetector:public TimeSeriesAnomalyDetector {
 public:
+    float correlation = 0.9;
     // stores a struct of every two correlated features
     vector<correlatedFeatures> cf;
     // a vector of reports
