@@ -23,8 +23,6 @@ public:
 	// you may add additional methods here
 };
 
-// you may add here helper classes
-
 
 // you may edit this class
 class Command{
