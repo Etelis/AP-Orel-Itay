@@ -28,15 +28,13 @@ public:
 
 // you may edit this class
 class Command{
+protected:
 	DefaultIO* dio;
 public:
 	Command(DefaultIO* dio):dio(dio){}
 	virtual void execute()=0;
 	virtual ~Command(){}
 };
-
-// implement here your command classes
-
 
 
 #endif /* COMMANDS_H_ */
