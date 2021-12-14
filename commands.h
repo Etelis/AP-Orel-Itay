@@ -128,6 +128,9 @@ public:
 
 class analyze_result : public Command{
     string uploadComment = "Please upload your local anomalies file.\n";
+    string uploadComplete = "Upload complete.\n";
+    string truePositiveComment = "True Positive Rate: ";
+    string falsePositiveComment = "False Positive Rate: ";
     sharedContent *sc;
 public:
     analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
@@ -135,9 +138,35 @@ public:
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size();
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size(), startTime, endTime;
+        int s, t, FP = 0, TP = 0;
+        float TPrate, FPrate;
+        bool intersecting;
         auto reportVec = reportVector();
         auto anomalyVec = anomalyVector(P, N);
+        dio->write(uploadComplete);
+
+        for(const auto& exception_report : anomalyVec) {
+            intersecting = false;
+            startTime = exception_report.first;
+            endTime = exception_report.second;
+            for(const auto& report : reportVec){
+                s = report.first;
+                t = report.second;
+                if ((startTime <= s && endTime >= s) || (startTime >= s && startTime <= t)){
+                    TP++;
+                    intersecting = true;
+                }
+            }
+            if (!intersecting)
+                FP++;
+        }
+
+        TPrate = (float) floor(TP * 1000 / P) / 1000;
+        FPrate = (float) floor(FP * 1000 / N) / 1000;
+
+        dio->write(truePositiveComment + to_string(TPrate) + "\n");
+        dio->write(falsePositiveComment + to_string(FPrate) + "\n");
     }
 
     vector<pair<int,int>> reportVector(){
