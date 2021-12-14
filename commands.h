@@ -10,25 +10,22 @@ using namespace std;
 
 class DefaultIO{
 public:
-
 	virtual string read()=0;
 	virtual void write(string text)=0;
 	virtual void write(float f)=0;
 	virtual void read(float* f)=0;
-	virtual ~DefaultIO(){}
-
-	// you may add additional methods here
+	virtual ~DefaultIO(){};
 };
 
 struct sharedContent{
     HybridAnomalyDetector hd;
-    float desiredThreshHold = 0.9;
+    float desiredThreshHold;
     vector<AnomalyReport> ar;
 };
 
 
 // you may edit this class
-class Command{
+class Command {
 protected:
 	DefaultIO* dio;
 public:
@@ -69,8 +66,10 @@ public:
     }
 };
 
+
 class algoSettingCommand : public Command {
     sharedContent* sc;
+public:
     algoSettingCommand(DefaultIO* dio, sharedContent* sc): Command(dio) {
         this->description = "2. algorithm settings\n";
         this->sc = sc;
@@ -88,16 +87,16 @@ class algoSettingCommand : public Command {
     }
 };
 
-// implement here your command classes
+
 class detect_anomalies : public Command{
-    string description = "3. detect anomalies\n";
+    sharedContent *sc;
     const char* trainCSV = "anomalyTrain.csv";
     const char* testCSV = "anomalyTrain.csv";
     const char* detectionCompleteMSG = "anomaly detection complete\n";
-    sharedContent *sc;
-
 public:
-    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
+    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
+        this->description = "3. detect anomalies\n";
+    }
     void execute() override{
         TimeSeries testTimeSeries(testCSV);
         TimeSeries trainTimeSeries(trainCSV);
@@ -110,11 +109,11 @@ public:
 };
 
 class display_results : public Command{
-    string description = "4. display results\n";
     sharedContent *sc;
-
 public:
-    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
+    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
+        this->description = "4. display results\n";
+    }
     void execute() override{
         string format, done = "done\n";
         for (const auto& report : sc->ar){
@@ -125,6 +124,14 @@ public:
     }
 };
 
+
+
+
+class finishCommand : public Command{
+public:
+    finishCommand(DefaultIO* dio) : Command(dio) {}
+    void execute() override {}
+};
 
 
 #endif /* COMMANDS_H_ */

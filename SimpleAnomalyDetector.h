@@ -10,9 +10,7 @@
 #include <iostream>
 #include "minCircle.h"
 
-#define CORRELATION_THRESHOLD 0.9
 #define DEVIATION_THRESHOLD float(1.1)
-#define INVALID_RADIUS -1
 #define DEFAULT_POINT Point{0,0}
 
 /**
@@ -42,7 +40,6 @@ public:
     vector<correlatedFeatures> getNormalModel(){
         return cf;
     }
-
 protected:
     virtual bool correlationTest(const float &p,const float &max);
     virtual void createCorrelatedPair(const string& firstFeature, const string& secondFeature, size_t size, Point** points, float max);

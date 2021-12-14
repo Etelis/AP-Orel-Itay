@@ -10,7 +10,9 @@ using namespace std;
 
 class CLI {
 	DefaultIO* dio;
-	// you can add data members
+    sharedContent* sc;
+	Command* commands[6];
+    void printMenu();
 public:
 	CLI(DefaultIO* dio);
 	void start();
