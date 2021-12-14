@@ -1,9 +1,12 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
-#include<iostream>
+
+
 #include <string.h>
 #include <fstream>
 #include <vector>
+#include <memory>
+#include <sstream>
 #include "HybridAnomalyDetector.h"
 
 using namespace std;
@@ -41,13 +44,13 @@ public:
 class uploadCommand : public Command {
 public:
     uploadCommand(DefaultIO* dio):Command(dio) {
-        this->description = "1. upload a time series csv file\n";
+        this->description = "1.upload a time series csv file\n";
     }
     void execute() override {
         ofstream train, test;
-        train.open("anomalyTrain.csv");
-        test.open("anomalyTest.csv");
-        dio->write("Please upload your local train csv file.\n");
+        train.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv");
+        test.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv");
+        dio->write("Please upload your local train CSV file.\n");
         string input = dio->read();
         // while the read line is not "done"
         while(input != "done") {
@@ -55,7 +58,7 @@ public:
             input = dio->read();
         }
         dio->write("Upload complete.\n");
-        dio->write("Please upload your local test csv file.\n");
+        dio->write("Please upload your local test CSV file.\n");
         input = dio->read();
         // while the read line is not "done"
         while(input != "done") {
@@ -73,11 +76,12 @@ class algoSettingCommand : public Command {
     sharedContent* sc;
 public:
     algoSettingCommand(DefaultIO* dio, sharedContent* sc): Command(dio) {
-        this->description = "2. algorithm settings\n";
+        this->description = "2.algorithm settings\n";
         this->sc = sc;
     }
     void execute() override {
         dio->write("The current correlation threshold is" + to_string(sc->desiredThreshHold) + "\n");
+        dio->write("Type a new threshold\n");
         float newThreshold;
         newThreshold = stof(dio->read());
         while(newThreshold <= 0 || newThreshold >= 1) {
@@ -92,12 +96,12 @@ public:
 
 class detect_anomalies : public Command{
     sharedContent *sc;
-    const char* trainCSV = "anomalyTrain.csv";
-    const char* testCSV = "anomalyTrain.csv";
-    const char* detectionCompleteMSG = "anomaly detection complete\n";
+    const char* trainCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv";
+    const char* testCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv";
+    const char* detectionCompleteMSG = "anomaly detection complete.\n";
 public:
     detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "3. detect anomalies\n";
+        this->description = "3.detect anomalies\n";
     }
     void execute() override{
         TimeSeries testTimeSeries(testCSV);
@@ -114,7 +118,7 @@ class display_results : public Command{
     sharedContent *sc;
 public:
     display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "4. display results\n";
+        this->description = "4.display results\n";
     }
     void execute() override{
         string format, done = "done\n";
@@ -134,23 +138,25 @@ class analyze_result : public Command{
     sharedContent *sc;
 public:
     analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "5. upload anomalies and analyze results\n";
+        this->description = "5.upload anomalies and analyze results\n";
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size(), startTime, endTime;
-        int s, t, FP = 0, TP = 0;
+        int P = 0, s, t, FP = 0, TP = 0, startTime, endTime;
+        int  N = TimeSeries("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv").getData().begin()->second
+                .size();
         float TPrate, FPrate;
         bool intersecting;
+        stringstream TPstream, FPstream;
         auto reportVec = reportVector();
         auto anomalyVec = anomalyVector(P, N);
         dio->write(uploadComplete);
 
-        for(const auto& exception_report : anomalyVec) {
+        for(const auto& exception_report : reportVec) {
             intersecting = false;
             startTime = exception_report.first;
             endTime = exception_report.second;
-            for(const auto& report : reportVec){
+            for(const auto& report : anomalyVec){
                 s = report.first;
                 t = report.second;
                 if ((startTime <= s && endTime >= s) || (startTime >= s && startTime <= t)){
@@ -164,9 +170,11 @@ public:
 
         TPrate = (float) floor(TP * 1000 / P) / 1000;
         FPrate = (float) floor(FP * 1000 / N) / 1000;
+        TPstream << TPrate;
+        FPstream << FPrate;
 
-        dio->write(truePositiveComment + to_string(TPrate) + "\n");
-        dio->write(falsePositiveComment + to_string(FPrate) + "\n");
+        dio->write(truePositiveComment + TPstream.str() + "\n");
+        dio->write(falsePositiveComment + FPstream.str() + "\n");
     }
 
     vector<pair<int,int>> reportVector(){
@@ -176,8 +184,9 @@ public:
         startTime = sc->ar.begin()->timeStep;
         currentTime = startTime;
         currentDescription = sc->ar.begin()->description;
-        for(const auto& report : sc->ar){
-            if (report.description != currentDescription){
+        for(int i = 1; i < sc->ar.size() - 1; i++){
+            auto report = sc->ar[i];
+            if (report.description != currentDescription || report.timeStep != currentTime + 1 ){
                 currentDescription = report.description;
                 pair<int,int> tempPair(startTime,currentTime);
                 reportVec.push_back(tempPair);
@@ -187,8 +196,13 @@ public:
             else
                 currentTime = report.timeStep;
         }
+
+        pair<int,int> tempPair(startTime,currentTime);
+        reportVec.push_back(tempPair);
+
         return reportVec;
     }
+
 
     vector<pair<int, int>> anomalyVector(int &P, int &N) {
         int splitLocation, startTime, endTime;
@@ -212,7 +226,9 @@ public:
 
 class finishCommand : public Command{
 public:
-    finishCommand(DefaultIO* dio) : Command(dio) {}
+    finishCommand(DefaultIO* dio) : Command(dio) {
+        this->description = "6.exit\n";
+    }
     void execute() override {}
 };
 
