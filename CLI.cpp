@@ -16,7 +16,7 @@ void CLI::start(){
     while(input != 6) {
         printMenu();
         input = stoi(this->dio->read());
-        if(input >= 1 && input <=6) {
+        if(input >= 1 && input <= 6) {
             this->commands[input - 1]->execute();
         }
     }

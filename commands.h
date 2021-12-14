@@ -129,39 +129,24 @@ public:
 class analyze_result : public Command{
     string uploadComment = "Please upload your local anomalies file.\n";
     sharedContent *sc;
-
 public:
     analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "5. upload anomalies and analyze results\n";}
+        this->description = "5. upload anomalies and analyze results\n";
+    }
 
     void execute() override{
-        unsigned int splitLocation, startTime, endTime;
-        string input;
-        auto reportVec = this->sc.reportVector();
-        auto reportVec_iter = reportVec.begin();
-        dio->write(uploadComment);
-        input = dio->read();
-
-        // while the read line is not "done"
-        while(input != "done") {
-            splitLocation = input.find(',');
-            startTime = stoi(input.substr(0,splitLocation));
-            endTime = stoi(input.substr(splitLocation + 1));
-
-            input = dio->read();
-        }
-
-
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData();
+        auto reportVec = reportVector();
+        auto anomalyVec = anomalyVector();
     }
+
     vector<pair<int,int>> reportVector(){
         int startTime, currentTime;
         string currentDescription;
         vector<pair<int,int>> reportVec;
-
         startTime = sc->ar.begin()->timeStep;
         currentTime = startTime;
         currentDescription = sc->ar.begin()->description;
-
         for(const auto& report : sc->ar){
             if (report.description != currentDescription){
                 currentDescription = report.description;
@@ -175,9 +160,21 @@ public:
         }
         return reportVec;
     }
+
+    vector<pair<int, int>> anomalyVector() {
+        unsigned int splitLocation, startTime, endTime;
+        vector<pair<int,int>> reportVec;
+        dio->write(uploadComment);
+        string input = dio->read();
+        // while the read line is not "done"
+        while(input != "done") {
+            splitLocation = input.find(',');
+            startTime = stoi(input.substr(0,splitLocation));
+            endTime = stoi(input.substr(splitLocation + 1));
+            input = dio->read();
+        }
+    }
 };
-
-
 
 class finishCommand : public Command{
 public:
