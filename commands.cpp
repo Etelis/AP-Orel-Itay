@@ -1,29 +1,19 @@
-//
-// Created by Itay on 12/14/2021.
-//
-
-struct sharedContent{
-    HybridAnomalyDetector hd;
-    float desiredThreshHold;
-};
-
 // implement here your command classes
 class detect_anomalies : public Command{
     string description = "3. detect anomalies\n";
     const char* trainCSV = "anomalyTrain.csv";
     const char* testCSV = "anomalyTrain.csv";
     const char* detectionCompleteMSG = "anomaly detection complete\n";
-    vector<AnomalyReport> ar;
+    sharedContent *sc;
 
 public:
-    detect_anomalies(DefaultIO* dio, sharedContent sc): Command(dio){}
+    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
     void execute() override{
-        HybridAnomalyDetector hd;
         TimeSeries testTimeSeries(testCSV);
         TimeSeries trainTimeSeries(trainCSV);
 
-        hd.learnNormal(trainTimeSeries);
-        ar = hd.detect(testTimeSeries);
+        sc->hd.learnNormal(trainTimeSeries);
+        sc->ar = sc->hd.detect(testTimeSeries);
         dio->write(detectionCompleteMSG);
     }
 
@@ -31,21 +21,16 @@ public:
 
 class display_results : public Command{
     string description = "4. display results\n";
-    const char* trainCSV = "anomalyTrain.csv";
-    const char* testCSV = "anomalyTrain.csv";
-    const char* detectionCompleteMSG = "anomaly detection complete\n";
-    vector<AnomalyReport> ar;
+    sharedContent *sc;
 
 public:
-    display_results(DefaultIO* dio): Command(dio){}
+    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
     void execute() override{
-        HybridAnomalyDetector hd;
-        TimeSeries testTimeSeries(testCSV);
-        TimeSeries trainTimeSeries(trainCSV);
-
-        hd.learnNormal(trainTimeSeries);
-        ar = hd.detect(testTimeSeries);
-        dio->write(detectionCompleteMSG);
+        string format, done = "done\n";
+        for (const auto& report : sc->ar){
+            format.append((to_string(report.timeStep) + "\t" + report.description + "\n"));
+        }
+        format.append(done);
+        dio->write(format);
     }
-
 };
