@@ -7,6 +7,16 @@
 
 #ifndef SERVER_H_
 #define SERVER_H_
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <thread>
+#include <pthread.h>
+#include <unistd.h>
+#include <cstring>
+#include "commands.h"
+#include "CLI.h"
+#include<unistd.h>
+#include<signal.h>
 
 
 using namespace std;
@@ -29,12 +39,17 @@ class AnomalyDetectionHandler:public ClientHandler{
     }
 };
 
+void handle_alarm(int) {
+    perror("timeout waiting for client.");
+    exit(EXIT_FAILURE);
+}
 
 // implement on Server.cpp
 class Server {
 	thread* t; // the thread to run the start() method in
-
-	// you may add data members
+public:
+    int serverFD;
+    struct sockaddr_in address;
 
 public:
 	Server(int port) throw (const char*);
