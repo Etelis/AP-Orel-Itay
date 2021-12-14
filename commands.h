@@ -10,27 +10,24 @@ using namespace std;
 
 class DefaultIO{
 public:
-
 	virtual string read()=0;
 	virtual void write(string text)=0;
 	virtual void write(float f)=0;
 	virtual void read(float* f)=0;
-	virtual ~DefaultIO(){}
-
-	// you may add additional methods here
+	virtual ~DefaultIO(){};
 };
 
 struct sharedContent{
 public:
     HybridAnomalyDetector hd;
-    float desiredThreshHold = 0.9;
+    float desiredThreshHold;
     vector<AnomalyReport> ar;
 };
 
 
 
 // you may edit this class
-class Command{
+class Command {
 protected:
 	DefaultIO* dio;
 public:
@@ -71,8 +68,10 @@ public:
     }
 };
 
+
 class algoSettingCommand : public Command {
     sharedContent* sc;
+public:
     algoSettingCommand(DefaultIO* dio, sharedContent* sc): Command(dio) {
         this->description = "2. algorithm settings\n";
         this->sc = sc;
@@ -90,16 +89,16 @@ class algoSettingCommand : public Command {
     }
 };
 
-// implement here your command classes
+
 class detect_anomalies : public Command{
-    string description = "3. detect anomalies\n";
+    sharedContent *sc;
     const char* trainCSV = "anomalyTrain.csv";
     const char* testCSV = "anomalyTrain.csv";
     const char* detectionCompleteMSG = "anomaly detection complete\n";
-    sharedContent *sc;
-
 public:
-    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
+    detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
+        this->description = "3. detect anomalies\n";
+    }
     void execute() override{
         TimeSeries testTimeSeries(testCSV);
         TimeSeries trainTimeSeries(trainCSV);
@@ -112,11 +111,11 @@ public:
 };
 
 class display_results : public Command{
-    string description = "4. display results\n";
     sharedContent *sc;
-
 public:
-    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){}
+    display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
+        this->description = "4. display results\n";
+    }
     void execute() override{
         string format, done = "done\n";
         for (const auto& report : sc->ar){
@@ -130,30 +129,57 @@ public:
 class analyze_result : public Command{
     string uploadComment = "Please upload your local anomalies file.\n";
     sharedContent *sc;
-
 public:
     analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "5. upload anomalies and analyze results\n";}
+        this->description = "5. upload anomalies and analyze results\n";
+    }
 
     void execute() override{
-        unsigned int splitLocation, startTime, endTime;
-        string input;
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData();
         auto reportVec = reportVector();
-        auto reportVec_iter = reportVec.begin();
-        dio->write(uploadComment);
-        input = dio->read();
+        auto anomalyVec = anomalyVector();
+    }
 
+    vector<pair<int,int>> reportVector(){
+        int startTime, currentTime;
+        string currentDescription;
+        vector<pair<int,int>> reportVec;
+        startTime = sc->ar.begin()->timeStep;
+        currentTime = startTime;
+        currentDescription = sc->ar.begin()->description;
+        for(const auto& report : sc->ar){
+            if (report.description != currentDescription){
+                currentDescription = report.description;
+                pair<int,int> tempPair(startTime,currentTime);
+                reportVec.push_back(tempPair);
+                startTime = report.timeStep;
+                currentTime = startTime;
+            }
+            else
+                currentTime = report.timeStep;
+        }
+        return reportVec;
+    }
+
+    vector<pair<int, int>> anomalyVector() {
+        unsigned int splitLocation, startTime, endTime;
+        vector<pair<int,int>> reportVec;
+        dio->write(uploadComment);
+        string input = dio->read();
         // while the read line is not "done"
         while(input != "done") {
             splitLocation = input.find(',');
             startTime = stoi(input.substr(0,splitLocation));
             endTime = stoi(input.substr(splitLocation + 1));
-
             input = dio->read();
         }
-
-
     }
+};
+
+class finishCommand : public Command{
+public:
+    finishCommand(DefaultIO* dio) : Command(dio) {}
+    void execute() override {}
 };
 
 
