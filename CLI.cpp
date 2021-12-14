@@ -7,7 +7,7 @@ CLI::CLI(DefaultIO* dio) {
     this->commands[1] = new algoSettingCommand(dio, this->sc);
     this->commands[2] = new detect_anomalies(dio, this->sc);
     this->commands[3] = new display_results(dio, this->sc);
-    //TODO
+    this->commands[4] = new analyze_result(dio, this->sc);
     this->commands[5] = new finishCommand(dio);
 }
 
