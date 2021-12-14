@@ -138,7 +138,7 @@ public:
     void execute() override{
         unsigned int splitLocation, startTime, endTime;
         string input;
-        auto reportVec = this->sc.reportVector();
+        auto reportVec = reportVector();
         auto reportVec_iter = reportVec.begin();
         dio->write(uploadComment);
         input = dio->read();
@@ -153,28 +153,6 @@ public:
         }
 
 
-    }
-    vector<pair<int,int>> reportVector(){
-        int startTime, currentTime;
-        string currentDescription;
-        vector<pair<int,int>> reportVec;
-
-        startTime = sc->ar.begin()->timeStep;
-        currentTime = startTime;
-        currentDescription = sc->ar.begin()->description;
-
-        for(const auto& report : sc->ar){
-            if (report.description != currentDescription){
-                currentDescription = report.description;
-                pair<int,int> tempPair(startTime,currentTime);
-                reportVec.push_back(tempPair);
-                startTime = report.timeStep;
-                currentTime = startTime;
-            }
-            else
-                currentTime = report.timeStep;
-        }
-        return reportVec;
     }
 };
 
