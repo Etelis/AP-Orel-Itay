@@ -135,28 +135,44 @@ public:
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData();
+        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size(), startTime, endTime;
         auto reportVec = reportVector();
         auto anomalyVec = anomalyVector();
+
+        for(const auto& exception_report : anomalyVec) {
+            startTime = exception_report.first;
+            endTime = exception_report.second;
+            for(const auto& report : reportVec){
+
+            }
+        }
     }
 
     vector<pair<int,int>> reportVector(){
         int startTime, currentTime;
+        bool first_iter = true;
         string currentDescription;
         vector<pair<int,int>> reportVec;
-        startTime = sc->ar.begin()->timeStep;
-        currentTime = startTime;
-        currentDescription = sc->ar.begin()->description;
-        for(const auto& report : sc->ar){
-            if (report.description != currentDescription){
+
+
+        for(const auto& report : sc->ar) {
+
+            if (first_iter){
+                startTime = sc->ar.begin()->timeStep;
+                currentTime = startTime;
+                currentDescription = sc->ar.begin()->description;
+                first_iter = false;
+            }
+
+            else if (report.description == currentDescription && report.timeStep == currentTime + 1) {
+                currentTime += 1; }
+
+            else {
                 currentDescription = report.description;
-                pair<int,int> tempPair(startTime,currentTime);
+                pair<int, int> tempPair(startTime, currentTime);
                 reportVec.push_back(tempPair);
                 startTime = report.timeStep;
-                currentTime = startTime;
-            }
-            else
-                currentTime = report.timeStep;
+                currentTime = startTime; }
         }
         return reportVec;
     }
