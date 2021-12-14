@@ -1,5 +1,6 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
+
 #include<iostream>
 #include <string.h>
 #include <fstream>
@@ -25,8 +26,6 @@ public:
 };
 
 
-
-// you may edit this class
 class Command {
 protected:
 	DefaultIO* dio;
@@ -41,13 +40,13 @@ public:
 class uploadCommand : public Command {
 public:
     uploadCommand(DefaultIO* dio):Command(dio) {
-        this->description = "1. upload a time series csv file\n";
+        this->description = "1.upload a time series CSV file\n";
     }
     void execute() override {
         ofstream train, test;
         train.open("anomalyTrain.csv");
         test.open("anomalyTest.csv");
-        dio->write("Please upload your local train csv file.\n");
+        dio->write("Please upload your local train CSV file.\n");
         string input = dio->read();
         // while the read line is not "done"
         while(input != "done") {
@@ -55,7 +54,7 @@ public:
             input = dio->read();
         }
         dio->write("Upload complete.\n");
-        dio->write("Please upload your local test csv file.\n");
+        dio->write("Please upload your local test CSV file.\n");
         input = dio->read();
         // while the read line is not "done"
         while(input != "done") {
@@ -73,7 +72,7 @@ class algoSettingCommand : public Command {
     sharedContent* sc;
 public:
     algoSettingCommand(DefaultIO* dio, sharedContent* sc): Command(dio) {
-        this->description = "2. algorithm settings\n";
+        this->description = "2.algorithm settings\n";
         this->sc = sc;
     }
     void execute() override {
@@ -97,7 +96,7 @@ class detect_anomalies : public Command{
     const char* detectionCompleteMSG = "anomaly detection complete\n";
 public:
     detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "3. detect anomalies\n";
+        this->description = "3.detect anomalies\n";
     }
     void execute() override{
         TimeSeries testTimeSeries(testCSV);
@@ -114,7 +113,7 @@ class display_results : public Command{
     sharedContent *sc;
 public:
     display_results(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "4. display results\n";
+        this->description = "4.display results\n";
     }
     void execute() override{
         string format, done = "done\n";
@@ -134,18 +133,18 @@ class analyze_result : public Command{
     sharedContent *sc;
 public:
     analyze_result(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
-        this->description = "5. upload anomalies and analyze results\n";
+        this->description = "5.upload anomalies and analyze results\n";
     }
 
     void execute() override{
-        int P = 0, N = TimeSeries("anomalyTest.csv").getData().at(0).size(), startTime, endTime;
+        int P = 0, startTime, endTime;
+        int N = TimeSeries("anomalyTest.csv").getData().begin()->second.size();
         int s, t, FP = 0, TP = 0;
         float TPrate, FPrate;
         bool intersecting;
         auto reportVec = reportVector();
         auto anomalyVec = anomalyVector(P, N);
         dio->write(uploadComplete);
-
         for(const auto& exception_report : anomalyVec) {
             intersecting = false;
             startTime = exception_report.first;
@@ -161,10 +160,8 @@ public:
             if (!intersecting)
                 FP++;
         }
-
         TPrate = (float) floor(TP * 1000 / P) / 1000;
         FPrate = (float) floor(FP * 1000 / N) / 1000;
-
         dio->write(truePositiveComment + to_string(TPrate) + "\n");
         dio->write(falsePositiveComment + to_string(FPrate) + "\n");
     }
@@ -176,8 +173,9 @@ public:
         startTime = sc->ar.begin()->timeStep;
         currentTime = startTime;
         currentDescription = sc->ar.begin()->description;
-        for(const auto& report : sc->ar){
-            if (report.description != currentDescription){
+        for(int i =1;i < sc->ar.size(); i++){
+            auto report = sc->ar.at(i);
+            if (report.description != currentDescription || report.timeStep != currentTime + 1){
                 currentDescription = report.description;
                 pair<int,int> tempPair(startTime,currentTime);
                 reportVec.push_back(tempPair);
@@ -212,9 +210,10 @@ public:
 
 class finishCommand : public Command{
 public:
-    finishCommand(DefaultIO* dio) : Command(dio) {}
+    finishCommand(DefaultIO* dio) : Command(dio) {
+        this->description = "exit";
+    }
     void execute() override {}
 };
-
 
 #endif /* COMMANDS_H_ */

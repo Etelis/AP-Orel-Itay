@@ -23,6 +23,7 @@ void CLI::start(){
 }
 
 void CLI::printMenu() {
+
     for(auto & command : this->commands) {
         this->dio->write(command->description);
     }
