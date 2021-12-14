@@ -8,9 +8,15 @@
 #ifndef SERVER_H_
 #define SERVER_H_
 
-#include <thread>
-#include "CLI.h"
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <thread>
+#include <pthread.h>
+#include <unistd.h>
+#include <cstring>
+#include "commands.h"
+#include "CLI.h"
+
 
 using namespace std;
 
@@ -58,8 +64,11 @@ class AnomalyDetectionHandler:public ClientHandler{
 };
 
 class Server {
-	thread* t;
+        thread* t; // the thread to run the start() method in
 public:
+    int serverFD;
+    struct sockaddr_in address;
+
 	Server(int port) throw (const char*);
 	virtual ~Server();
 	void start(ClientHandler& ch)throw(const char*);
