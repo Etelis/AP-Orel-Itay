@@ -1,7 +1,5 @@
 #ifndef COMMANDS_H_
 #define COMMANDS_H_
-
-
 #include <string.h>
 #include <fstream>
 #include <vector>
@@ -48,8 +46,8 @@ public:
     }
     void execute() override {
         ofstream train, test;
-        train.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv");
-        test.open("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv");
+        test.open("anomalyTest.csv");
+        train.open("anomalyTrain.csv");
         dio->write("Please upload your local train CSV file.\n");
         string input = dio->read();
         // while the read line is not "done"
@@ -96,8 +94,8 @@ public:
 
 class detect_anomalies : public Command{
     sharedContent *sc;
-    const char* trainCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTrain.csv";
-    const char* testCSV = "C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv";
+    const char* trainCSV = "anomalyTrain.csv";
+    const char* testCSV = "anomalyTest.csv";
     const char* detectionCompleteMSG = "anomaly detection complete.\n";
 public:
     detect_anomalies(DefaultIO* dio, sharedContent *sc): Command(dio), sc(sc){
@@ -143,8 +141,7 @@ public:
 
     void execute() override{
         int P = 0, s, t, FP = 0, TP = 0, startTime, endTime;
-        int  N = TimeSeries("C:\\Users\\Itay\\Desktop\\CS\\AP-Orel-Itay\\anomalyTest.csv").getData().begin()->second
-                .size();
+        int  N = TimeSeries("anomalyTest.csv").getData().begin()->second.size();
         float TPrate, FPrate;
         bool intersecting;
         stringstream TPstream, FPstream;

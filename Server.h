@@ -11,11 +11,11 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <thread>
-#include <pthread.h>
 #include <unistd.h>
 #include <cstring>
 #include "commands.h"
 #include "CLI.h"
+#include "signal.h"
 
 
 using namespace std;
@@ -35,9 +35,10 @@ public:
     string read() override {
         string input = "";
         char buffer = 0;
+        recv(socketID, &buffer, 1, 0);
         while (buffer != '\n') {
-            recv(socketID, &buffer, 1, 0);
             input += buffer;
+            recv(socketID, &buffer, 1, 0);
         }
         return input;
     }
@@ -66,8 +67,8 @@ class AnomalyDetectionHandler:public ClientHandler{
 class Server {
         thread* t; // the thread to run the start() method in
 public:
-    int serverFD;
-    struct sockaddr_in address;
+    int serverFD = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in address = {0}, client = {0};
 
 	Server(int port) throw (const char*);
 	virtual ~Server();

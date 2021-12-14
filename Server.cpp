@@ -1,8 +1,12 @@
-
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <thread>
 #include "Server.h"
 
 Server::Server(int port)throw (const char*) {
-    if ((serverFD = socket(AF_INET, SOCK_STREAM, 0) == 0)){
+
+    if (serverFD == 0){
         throw "socket failed";
     }
 
@@ -10,7 +14,7 @@ Server::Server(int port)throw (const char*) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    if (bind(serverFD, (struct sockaddr *)&address, sizeof (address)) < 0){
+    if (bind(serverFD, (struct sockaddr *) &address, sizeof (address)) < 0){
         throw "bind failed";
 
     }
@@ -21,25 +25,26 @@ Server::Server(int port)throw (const char*) {
 }
 
 void handle_alarm(int) {
-    perror("timeout waiting for client.");
-    exit(EXIT_FAILURE);
+    throw "timeout waiting for client";
 }
 
 void Server::start(ClientHandler& ch)throw(const char*){
-    int clientFD;
-    signal( SIGALRM, handle_alarm);
-    alarm(10);
-    socklen_t client_size = sizeof (address);
-
-    if ((clientFD = accept(serverFD, (struct sockaddr *)&address, &client_size) < 0)){
-        throw "error on accept";
-    }
-    alarm(0);
-
-    t = new thread([&ch, &clientFD](){
-        ch.handle(clientFD);
-        close(clientFD);
-    });
+        t = new thread([&ch, this]() {
+            while (true) {
+                int clientFD;
+                socklen_t client_size = sizeof(address);
+                signal(SIGALRM, handle_alarm);
+                alarm(10);
+                clientFD = accept(serverFD, (struct sockaddr *) &client, &client_size);
+                if ((clientFD < 0)) {
+                    throw "error on accept";
+                }
+                alarm(0);
+                ch.handle(clientFD);
+                close(clientFD);
+                cout << "disconnecting client" << endl;
+            }
+        });
 
 }
 
