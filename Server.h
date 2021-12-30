@@ -66,6 +66,7 @@ class AnomalyDetectionHandler:public ClientHandler{
 
 class Server {
         thread* t; // the thread to run the start() method in
+        bool stopFlag = false;
 public:
     int serverFD = socket(AF_INET, SOCK_STREAM, 0);
     struct sockaddr_in address = {0}, client = {0};

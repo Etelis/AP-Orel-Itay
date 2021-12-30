@@ -30,25 +30,22 @@ void handle_alarm(int) {
 
 void Server::start(ClientHandler& ch)throw(const char*){
         t = new thread([&ch, this]() {
-            while (true) {
+            while (!this->stopFlag) {
                 int clientFD;
                 socklen_t client_size = sizeof(address);
-                signal(SIGALRM, handle_alarm);
-                alarm(10);
                 clientFD = accept(serverFD, (struct sockaddr *) &client, &client_size);
                 if ((clientFD < 0)) {
                     throw "error on accept";
                 }
-                alarm(0);
                 ch.handle(clientFD);
                 close(clientFD);
-                cout << "disconnecting client" << endl;
             }
         });
 
 }
 
 void Server::stop(){
+    this->stopFlag = true;
 	t->join(); // do not delete this!
     close(serverFD);
 }
